@@ -19,9 +19,7 @@ export default async function HomePage() {
   return (
     <>
       <ParticleBackground />
-      <div className="bg-gradient-hero">
-        <Hero name={data.name} bio={data.bio || ""} skills={data.skills || []} contacts={data.contacts || {}} />
-      </div>
+      <Hero name={data.name} bio={data.bio || ""} skills={data.skills || []} contacts={data.contacts || {}} />
     </>
   );
 }

@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/", label: "首页" },
-  { href: "/works", label: "作品集" },
+  { href: "/works", label: "作品" },
   { href: "/blog", label: "博客" },
   { href: "/timeline", label: "时间线" },
 ];
@@ -17,7 +17,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -30,25 +30,23 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/80 backdrop-blur-lg border-b border-border" : "bg-transparent"
+        scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-gradient">
+          <Link href="/" className="text-lg font-bold tracking-tight">
             G-YOUNG
           </Link>
 
           {/* 桌面导航 */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "text-primary-light bg-primary/10"
-                    : "text-muted hover:text-foreground hover:bg-card"
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  isActive(item.href) ? "text-foreground bg-black/5" : "text-muted hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -58,9 +56,9 @@ export default function Navbar() {
               href="https://github.com/G-YOUNG01"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-4 btn-outline text-sm py-2"
+              className="ml-3 text-sm font-medium text-muted hover:text-foreground transition-colors"
             >
-              GitHub
+              GitHub ↗
             </a>
           </div>
 
@@ -70,7 +68,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="菜单"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -82,14 +80,14 @@ export default function Navbar() {
 
         {/* 移动端菜单 */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 space-y-1">
+          <div className="md:hidden pb-6 pt-2 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-2 rounded-lg text-sm font-medium ${
-                  isActive(item.href) ? "text-primary-light bg-primary/10" : "text-muted hover:text-foreground"
+                className={`block px-4 py-3 rounded-xl text-sm font-medium ${
+                  isActive(item.href) ? "text-foreground bg-black/5" : "text-muted hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -99,9 +97,9 @@ export default function Navbar() {
               href="https://github.com/G-YOUNG01"
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-2 text-sm text-muted hover:text-foreground"
+              className="block px-4 py-3 text-sm text-muted hover:text-foreground"
             >
-              GitHub
+              GitHub ↗
             </a>
           </div>
         )}

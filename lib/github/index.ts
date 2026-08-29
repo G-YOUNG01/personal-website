@@ -30,12 +30,27 @@ export interface GitHubUser {
 
 const GITHUB_API = "https://api.github.com";
 
+// 检测是否为占位 token（包含 placeholder、xxxxxxxx 或为空）
+function isPlaceholderToken(token: string): boolean {
+  if (!token) return true;
+  const lower = token.toLowerCase();
+  return lower.includes("placeholder") || lower.includes("xxxxxxxx") || lower === "ghp_placeholder";
+}
+
+function getAuthHeaders(): Record<string, string> {
+  const token = env.GITHUB_TOKEN;
+  if (isPlaceholderToken(token)) {
+    return { Accept: "application/vnd.github+json" };
+  }
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+  };
+}
+
 export async function fetchUserRepos(): Promise<GitHubRepo[]> {
   const res = await fetch(`${GITHUB_API}/users/${env.GITHUB_USERNAME}/repos?per_page=100&sort=updated`, {
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
+    headers: getAuthHeaders(),
     next: { revalidate: 300 }, // 5 分钟缓存
   });
 
@@ -49,10 +64,7 @@ export async function fetchUserRepos(): Promise<GitHubRepo[]> {
 
 export async function fetchUserProfile(): Promise<GitHubUser> {
   const res = await fetch(`${GITHUB_API}/users/${env.GITHUB_USERNAME}`, {
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-    },
+    headers: getAuthHeaders(),
     next: { revalidate: 600 }, // 10 分钟缓存
   });
 

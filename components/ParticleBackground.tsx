@@ -1,109 +1,123 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
 
+/**
+ * Anthropic 风格的柔和光晕背景
+ * 几个大的模糊彩色光斑缓慢漂浮，温暖柔和
+ */
 export default function ParticleBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000,
-    );
-    camera.position.z = 50;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
-
-    // 创建粒子
-    const particleCount = 800;
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-
-    const color1 = new THREE.Color(0x6366f1); // indigo
-    const color2 = new THREE.Color(0x22d3ee); // cyan
-    const color3 = new THREE.Color(0xec4899); // pink
-
-    for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 100;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-
-      const colorChoice = Math.random();
-      const color = colorChoice < 0.33 ? color1 : colorChoice < 0.66 ? color2 : color3;
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
-    }
-
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-
-    const material = new THREE.PointsMaterial({
-      size: 0.15,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.6,
-      blending: THREE.AdditiveBlending,
-    });
-
-    const particles = new THREE.Points(geometry, material);
-    scene.add(particles);
-
-    // 鼠标交互
-    let mouseX = 0;
-    let mouseY = 0;
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // 动画循环
-    let animationId: number;
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-      particles.rotation.x += 0.0003;
-      particles.rotation.y += 0.0005;
-
-      // 鼠标视差
-      camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
-      camera.position.y += (mouseY * 5 - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // 响应式
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
-      if (containerRef.current && renderer.domElement.parentNode === containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement);
-      }
-    };
+    // 纯 CSS 动画，无需 JS 驱动
+    // 保留 ref 用于后续可能的交互扩展
   }, []);
 
-  return <div ref={containerRef} className="fixed inset-0 -z-10 pointer-events-none" />;
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
+      style={{ background: "#faf8f5" }}
+    >
+      {/* 主光晕 - 橙色 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "600px",
+          height: "600px",
+          background: "radial-gradient(circle, rgba(251, 146, 60, 0.35) 0%, rgba(251, 146, 60, 0) 70%)",
+          filter: "blur(60px)",
+          top: "-10%",
+          left: "-5%",
+          animation: "float1 20s ease-in-out infinite",
+        }}
+      />
+
+      {/* 第二光晕 - 粉色 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "500px",
+          height: "500px",
+          background: "radial-gradient(circle, rgba(244, 114, 182, 0.3) 0%, rgba(244, 114, 182, 0) 70%)",
+          filter: "blur(60px)",
+          top: "20%",
+          right: "-10%",
+          animation: "float2 25s ease-in-out infinite",
+        }}
+      />
+
+      {/* 第三光晕 - 紫色 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "550px",
+          height: "550px",
+          background: "radial-gradient(circle, rgba(167, 139, 250, 0.28) 0%, rgba(167, 139, 250, 0) 70%)",
+          filter: "blur(60px)",
+          bottom: "-15%",
+          left: "20%",
+          animation: "float3 22s ease-in-out infinite",
+        }}
+      />
+
+      {/* 第四光晕 - 淡黄色 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "400px",
+          height: "400px",
+          background: "radial-gradient(circle, rgba(253, 224, 71, 0.25) 0%, rgba(253, 224, 71, 0) 70%)",
+          filter: "blur(50px)",
+          top: "50%",
+          left: "40%",
+          animation: "float4 18s ease-in-out infinite",
+        }}
+      />
+
+      {/* 第五光晕 - 青色点缀 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "350px",
+          height: "350px",
+          background: "radial-gradient(circle, rgba(94, 234, 212, 0.2) 0%, rgba(94, 234, 212, 0) 70%)",
+          filter: "blur(50px)",
+          bottom: "10%",
+          right: "15%",
+          animation: "float5 23s ease-in-out infinite",
+        }}
+      />
+
+      {/* 全局动画定义 */}
+      <style jsx global>{`
+        @keyframes float1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(80px, 60px) scale(1.1); }
+          66% { transform: translate(-40px, 100px) scale(0.95); }
+        }
+        @keyframes float2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          25% { transform: translate(-60px, 80px) scale(1.05); }
+          50% { transform: translate(-100px, -40px) scale(0.9); }
+          75% { transform: translate(-30px, -80px) scale(1.1); }
+        }
+        @keyframes float3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(100px, -60px) scale(1.08); }
+          66% { transform: translate(50px, -100px) scale(0.92); }
+        }
+        @keyframes float4 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-80px, 60px) scale(1.15); }
+        }
+        @keyframes float5 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-70px, -50px) scale(1.1); }
+          66% { transform: translate(40px, -80px) scale(0.95); }
+        }
+      `}</style>
+    </div>
+  );
 }

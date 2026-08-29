@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e8e8f0;
-  --card: #12121a;
-  --card-hover: #1a1a25;
-  --border: #2a2a3a;
-  --primary: #6366f1;
-  --primary-light: #818cf8;
-  --accent: #22d3ee;
-  --accent-light: #67e8f9;
+  --background: #faf8f5;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-hover: #fff7ed;
+  --border: #ebe7e1;
+  --primary: #d97706;
+  --primary-light: #c2620a;
+  --accent: #db2777;
+  --accent-light: #be185d;
   --pink: #ec4899;
-  --purple: #a855f7;
-  --muted: #8b8b9e;
+  --purple: #9333ea;
+  --muted: #737373;
 }
 
 @theme inline {
@@ -41,98 +41,103 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 渐变背景光效 */
-.bg-gradient-hero {
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 70%);
-}
-
-/* 渐变文字 */
+/* 渐变文字 - 暖色 */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary-light), var(--accent-light), var(--pink));
+  background: linear-gradient(135deg, #d97706, #db2777, #9333ea);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* 霓虹发光边框 */
+/* 卡片 - 极简柔和 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.card:hover {
+  border-color: #d4c4b0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* 作品卡片悬停 */
 .glow-border {
   position: relative;
   background: var(--card);
   border: 1px solid var(--border);
+  border-radius: 16px;
   transition: all 0.3s ease;
 }
 
 .glow-border:hover {
-  border-color: var(--primary);
-  box-shadow:
-    0 0 20px rgba(99, 102, 241, 0.2),
-    0 0 40px rgba(99, 102, 241, 0.1);
+  border-color: #d4c4b0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   transform: translateY(-2px);
 }
 
-/* 卡片样式 */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  background: var(--card-hover);
-  border-color: var(--primary);
-}
-
-/* 按钮 */
+/* 按钮 - 极简 */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--purple));
+  background: #1a1a1a;
   color: white;
-  padding: 0.625rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
   border: none;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  background: #333;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-outline {
   background: transparent;
   color: var(--foreground);
-  padding: 0.625rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
   border: 1px solid var(--border);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-outline:hover {
-  border-color: var(--primary);
-  background: rgba(99, 102, 241, 0.1);
+  border-color: #999;
+  background: rgba(0, 0, 0, 0.03);
 }
 
-/* 标签 */
+/* 标签 - 柔和 */
 .tag {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 0.875rem;
   border-radius: 9999px;
-  font-size: 0.75rem;
-  background: rgba(99, 102, 241, 0.15);
-  color: var(--primary-light);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  font-size: 0.8rem;
+  background: #f5f0e8;
+  color: #92600a;
+  border: 1px solid #ebe0cc;
+  font-weight: 500;
 }
 
 /* 时间线 */
@@ -142,7 +147,7 @@ body {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, var(--primary), var(--accent), transparent);
+  background: linear-gradient(to bottom, #d97706, #db2777, transparent);
 }
 
 .timeline-dot {
@@ -151,32 +156,40 @@ body {
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
-  background: var(--primary);
+  background: #d97706;
   border: 3px solid var(--background);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.2);
 }
 
-/* 代码块 */
+/* 代码块 - 深色保持 */
 pre {
-  background: #0d0d14;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.25rem;
   overflow-x: auto;
+  color: #e8e8e8;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 code {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-family: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
 }
 
-/* 博客内容样式 */
+/* 博客内容 */
 .prose-content h1,
 .prose-content h2,
 .prose-content h3 {
   color: var(--foreground);
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.prose-content h1 {
+  font-size: 2rem;
 }
 
 .prose-content h2 {
@@ -188,38 +201,48 @@ code {
 }
 
 .prose-content p {
-  margin-bottom: 1rem;
-  line-height: 1.75;
-  color: #c0c0d0;
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+  color: #404040;
+  font-size: 1.05rem;
 }
 
 .prose-content ul,
 .prose-content ol {
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1.75rem;
 }
 
 .prose-content li {
-  margin-bottom: 0.5rem;
-  color: #c0c0d0;
+  margin-bottom: 0.6rem;
+  color: #404040;
+  line-height: 1.7;
 }
 
 .prose-content a {
-  color: var(--primary-light);
+  color: #c2620a;
   text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-content a:hover {
+  color: #92600a;
 }
 
 .prose-content blockquote {
-  border-left: 3px solid var(--primary);
-  padding-left: 1rem;
-  margin: 1rem 0;
-  color: var(--muted);
+  border-left: 3px solid #d97706;
+  padding: 0.75rem 1.25rem;
+  margin: 1.5rem 0;
+  color: #525252;
   font-style: italic;
+  background: #fdfaf5;
+  border-radius: 0 12px 12px 0;
 }
 
 .prose-content img {
-  border-radius: 8px;
+  border-radius: 12px;
   max-width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* 滚动条 */
@@ -233,12 +256,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: #d4cfc7;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: #b8b0a5;
 }
 
 /* 减少动画偏好 */
