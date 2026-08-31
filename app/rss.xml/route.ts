@@ -14,7 +14,7 @@ export async function GET() {
 
   const items = publishedPosts
     .map((post) => {
-      const pubDate = new Date(post.createdAt.getTime() * 1000).toUTCString();
+      const pubDate = post.createdAt.toUTCString();
       const description = post.content.replace(/<[^>]*>/g, "").slice(0, 300);
       return `    <item>
       <title><![CDATA[${post.title}]]></title>

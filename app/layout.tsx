@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackgroundGlow from "@/components/BackgroundGlow";
 import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
@@ -50,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <BackgroundGlow />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

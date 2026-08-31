@@ -30,7 +30,9 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/85 backdrop-blur-md border-b border-border" : "bg-transparent"
+        scrolled
+          ? "bg-white/30 backdrop-blur-2xl backdrop-saturate-200 border-b border-white/50 shadow-xl shadow-black/5"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-5xl mx-auto px-6">
@@ -45,8 +47,10 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  isActive(item.href) ? "text-foreground bg-black/5" : "text-muted hover:text-foreground"
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  isActive(item.href)
+                    ? "bg-white/60 text-foreground shadow-md shadow-black/5 border border-white/70"
+                    : "text-muted hover:text-foreground hover:bg-white/40"
                 }`}
               >
                 {item.label}
@@ -67,6 +71,8 @@ export default function Navbar() {
             className="md:hidden p-2 text-foreground"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="菜单"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileOpen ? (
@@ -78,16 +84,16 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* 移动端菜单 */}
+        {/* 移动端菜单 - 毛玻璃 */}
         {mobileOpen && (
-          <div className="md:hidden pb-6 pt-2 space-y-1">
+          <div id="mobile-menu" className="md:hidden pb-6 pt-2 mt-2 mb-4 rounded-2xl bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-3 rounded-xl text-sm font-medium ${
-                  isActive(item.href) ? "text-foreground bg-black/5" : "text-muted hover:text-foreground"
+                className={`block px-4 py-3 rounded-xl text-sm font-medium mx-2 ${
+                  isActive(item.href) ? "bg-white/70 text-foreground" : "text-muted hover:text-foreground hover:bg-white/40"
                 }`}
               >
                 {item.label}
@@ -97,7 +103,7 @@ export default function Navbar() {
               href="https://github.com/G-YOUNG01"
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-3 text-sm text-muted hover:text-foreground"
+              className="block px-4 py-3 mx-2 text-sm text-muted hover:text-foreground"
             >
               GitHub ↗
             </a>

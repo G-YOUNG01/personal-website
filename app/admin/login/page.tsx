@@ -38,41 +38,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 bg-gradient-hero">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="card p-8">
-          <h1 className="text-2xl font-bold text-center mb-2">
-            <span className="text-gradient">管理员登录</span>
-          </h1>
-          <p className="text-muted text-center text-sm mb-8">请输入管理员账号密码</p>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold mb-2">
+              <span className="text-gradient">管理员登录</span>
+            </h1>
+            <p className="text-muted text-sm">请输入管理员账号密码</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium mb-2">用户名</label>
+              <label className="block text-sm font-medium mb-2 text-foreground/80">用户名</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full px-4 py-3"
                 placeholder="admin"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">密码</label>
+              <label className="block text-sm font-medium mb-2 text-foreground/80">密码</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full px-4 py-3"
                 placeholder="••••••••"
                 required
               />
             </div>
 
             {error && (
-              <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2">
+              <div className="text-red-600 text-sm bg-red-50/60 backdrop-blur-sm border border-red-200/60 rounded-2xl px-4 py-3">
                 {error}
               </div>
             )}
@@ -80,7 +82,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-primary justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "登录中..." : "登录"}
             </button>

@@ -40,7 +40,7 @@ export default async function BlogPage() {
               className="card p-6 block hover:border-primary transition-all group"
             >
               <div className="flex items-center gap-3 mb-2 text-sm text-muted">
-                <time>{new Date(post.createdAt.getTime() * 1000).toLocaleDateString("zh-CN")}</time>
+                <time>{post.createdAt.toLocaleDateString("zh-CN")}</time>
                 {post.tags && post.tags.length > 0 && (
                   <div className="flex gap-1.5">
                     {post.tags.slice(0, 3).map((tag) => (

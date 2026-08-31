@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -17,9 +18,9 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <button onClick={reset} className="btn-primary">
           重试
         </button>
-        <a href="/" className="btn-outline">
+        <Link href="/" className="btn-outline">
           返回首页
-        </a>
+        </Link>
       </div>
     </div>
   );

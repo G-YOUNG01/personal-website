@@ -44,3 +44,6 @@ next-env.d.ts
 # logs
 /logs/
 *.log
+
+# 调试脚本（dump 数据库内容）
+/scripts/read-data.mjs

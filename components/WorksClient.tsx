@@ -58,14 +58,16 @@ export default function WorksClient({ repos }: WorksClientProps) {
         <input
           type="text"
           placeholder="搜索项目..."
+          aria-label="搜索项目"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2.5 rounded-lg bg-card border border-border text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+          className="flex-1 px-4 py-3"
         />
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="px-4 py-2.5 rounded-lg bg-card border border-border text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer"
+          aria-label="排序方式"
+          className="px-4 py-3 cursor-pointer"
         >
           <option value="updated">最近更新</option>
           <option value="stars">Star 数</option>

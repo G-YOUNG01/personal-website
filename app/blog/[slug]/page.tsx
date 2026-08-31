@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import sanitizeHtml from "sanitize-html";
 import { db } from "@/lib/db";
@@ -64,8 +65,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
-    datePublished: new Date(post.createdAt.getTime() * 1000).toISOString(),
-    dateModified: new Date(post.updatedAt.getTime() * 1000).toISOString(),
+    datePublished: post.createdAt.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
     author: { "@type": "Person", name: "G-YOUNG" },
     url: `${env.SITE_URL}/blog/${post.slug}`,
   };
@@ -76,7 +77,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-4 text-sm text-muted">
-          <time>{new Date(post.createdAt.getTime() * 1000).toLocaleDateString("zh-CN")}</time>
+          <time>{post.createdAt.toLocaleDateString("zh-CN")}</time>
           {post.tags && post.tags.length > 0 && (
             <div className="flex gap-1.5">
               {post.tags.map((tag) => (
@@ -93,9 +94,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="prose-content" dangerouslySetInnerHTML={{ __html: cleanContent }} />
 
       <div className="mt-16 pt-8 border-t border-border">
-        <a href="/blog" className="text-primary-light hover:underline">
+        <Link href="/blog" className="text-primary-light hover:underline">
           ← 返回博客列表
-        </a>
+        </Link>
       </div>
     </article>
   );

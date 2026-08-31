@@ -16,9 +16,9 @@ export default async function AdminPage() {
   const profileData = await db.select().from(profile).where(eq(profile.id, 1)).get();
 
   const stats = [
-    { label: "博客文章", value: postCount?.count || 0, href: "/admin?tab=posts", icon: "📝" },
-    { label: "时间线事件", value: timelineCount?.count || 0, href: "/admin?tab=timeline", icon: "📅" },
-    { label: "个人简介", value: profileData ? "已配置" : "未配置", href: "/admin?tab=profile", icon: "👤" },
+    { label: "博客文章", value: postCount?.count || 0, icon: "📝" },
+    { label: "时间线事件", value: timelineCount?.count || 0, icon: "📅" },
+    { label: "个人简介", value: profileData ? "已配置" : "未配置", icon: "👤" },
   ];
 
   return (
@@ -31,6 +31,7 @@ export default async function AdminPage() {
           <p className="text-muted">欢迎回来，{session.username}</p>
         </div>
         <form action="/api/auth/logout" method="POST">
+          <input type="hidden" name="csrfToken" value={session.csrfToken || ""} />
           <button type="submit" className="btn-outline text-sm">
             退出登录
           </button>
@@ -40,11 +41,11 @@ export default async function AdminPage() {
       {/* 统计卡片 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
         {stats.map((stat) => (
-          <Link key={stat.label} href={stat.href} className="card p-6 hover:border-primary transition-all">
+          <div key={stat.label} className="card p-6">
             <div className="text-3xl mb-3">{stat.icon}</div>
             <div className="text-2xl font-bold mb-1">{stat.value}</div>
             <div className="text-muted text-sm">{stat.label}</div>
-          </Link>
+          </div>
         ))}
       </div>
 
@@ -52,19 +53,37 @@ export default async function AdminPage() {
       <div className="card p-6">
         <h2 className="text-lg font-semibold mb-4">快捷操作</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/admin?tab=posts&action=new" className="btn-primary text-center text-sm">
-            新建文章
-          </Link>
-          <Link href="/admin?tab=timeline&action=new" className="btn-outline text-center text-sm">
-            添加时间线
-          </Link>
-          <Link href="/admin?tab=profile" className="btn-outline text-center text-sm">
-            编辑简介
-          </Link>
+          <button
+            type="button"
+            disabled
+            title="内容管理功能开发中"
+            className="btn-primary text-center text-sm opacity-40 cursor-not-allowed"
+          >
+            新建文章（开发中）
+          </button>
+          <button
+            type="button"
+            disabled
+            title="内容管理功能开发中"
+            className="btn-outline text-center text-sm opacity-40 cursor-not-allowed"
+          >
+            添加时间线（开发中）
+          </button>
+          <button
+            type="button"
+            disabled
+            title="内容管理功能开发中"
+            className="btn-outline text-center text-sm opacity-40 cursor-not-allowed"
+          >
+            编辑简介（开发中）
+          </button>
           <Link href="/" target="_blank" className="btn-outline text-center text-sm">
             查看网站
           </Link>
         </div>
+        <p className="mt-4 text-sm text-muted">
+          内容管理（文章 / 时间线 / 简介的增删改）功能正在开发中，当前仅支持数据展示与登录管理。
+        </p>
       </div>
 
       <div className="mt-8 text-center text-sm text-muted">
