@@ -44,9 +44,9 @@ export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {featured.map((repo, i) => {
           const langColor = repo.language ? languageColors[repo.language] || "#94a3b8" : "#94a3b8";
-          const tags = [repo.language, ...(repo.topics || []).slice(0, 2)]
-            .filter(Boolean)
-            .slice(0, 3);
+          const tags = [
+            ...new Set([repo.language, ...(repo.topics || []).slice(0, 2)].filter(Boolean)),
+          ].slice(0, 3);
           return (
             <motion.a
               key={repo.id}

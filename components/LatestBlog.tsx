@@ -39,7 +39,7 @@ export default function LatestBlog({ posts }: LatestBlogProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {list.map((post, i) => {
-            const date = new Date(post.createdAt).toLocaleDateString("zh-CN");
+            const date = post.createdAt.toLocaleDateString("zh-CN");
             const summary = post.content.replace(/<[^>]*>/g, "").slice(0, 80);
             return (
               <motion.div

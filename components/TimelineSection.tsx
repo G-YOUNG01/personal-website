@@ -28,7 +28,11 @@ const iconMap: Record<string, string> = {
 
 /** 成长时间线 - 横向 4 节点 */
 export default function TimelineSection({ items }: TimelineSectionProps) {
-  const list = [...items].sort((a, b) => a.year - b.year).slice(0, 4);
+  // 取年份最近的 4 条（展示近期成长节点），再按时间升序排列
+  const list = [...items]
+    .sort((a, b) => b.year - a.year)
+    .slice(0, 4)
+    .sort((a, b) => a.year - b.year);
 
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
