@@ -193,16 +193,16 @@ pm2 set pm2-logrotate:retain 7
 
 全部通过 `.env` 配置（**不进 Git**，`.env` 已在 `.gitignore`）。启动时由 Zod 校验格式；运行时校验关键配置（`lib/env.ts` 的 `assertRuntimeConfig`）。
 
-| 变量                  | 必填   | 说明                                                                                                      |
-| --------------------- | ------ | --------------------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`        | 建议   | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
-| `GITHUB_USERNAME`     | 否     | GitHub 账号，默认 `G-YOUNG01`                                                                             |
-| `ADMIN_USERNAME`      | 否     | 后台用户名，默认 `admin`                                                                                  |
-| `ADMIN_PASSWORD_HASH` | **是** | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错          |
-| `SESSION_SECRET`      | **是** | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值                                                    |
-| `SITE_URL`            | **是** | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）                                                        |
-| `DATABASE_URL`        | 否     | SQLite 连接串，默认 `file:./data.db`                                                                      |
-| `NODE_ENV`            | 否     | `development` / `production` / `test`                                                                     |
+| 变量                  | 必填           | 说明                                                                                                      |
+| --------------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`        | 建议           | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
+| `GITHUB_USERNAME`     | 否             | GitHub 账号，默认 `G-YOUNG01`                                                                             |
+| `ADMIN_USERNAME`      | 否             | 后台用户名，默认 `admin`                                                                                  |
+| `ADMIN_PASSWORD_HASH` | **是**         | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错          |
+| `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                |
+| `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名    |
+| `DATABASE_URL`        | 否             | SQLite 连接串，默认 `file:./data.db`                                                                      |
+| `NODE_ENV`            | 否             | `development` / `production` / `test`                                                                     |
 
 ---
 
@@ -248,7 +248,7 @@ SQLite 是单进程写锁数据库，PM2 cluster 多进程并发写会触发 `SQ
 
 ### 静态化
 
-- 首页 profile：`export const revalidate = 300`（ISR 5 分钟，首页含 GitHub 数据，与作品页缓存一致）
+- 首页：`export const revalidate = 300`（ISR 5 分钟，首页含 GitHub 数据，与作品页缓存一致）
 - 作品页：`revalidate = 300`（5 分钟）
 - sitemap / RSS：动态生成
 
@@ -350,7 +350,7 @@ POST /api/auth/logout    # 登出（校验 CSRF token）
 GET  /api/health         # 健康检查
 ```
 
-> 博客 / 时间线 / 简介的 CRUD API 与图片上传已预留目录（`app/api/blog|profile|timeline|upload`），**尚未实现**，见 Roadmap。
+> 博客 / 时间线 / 简介的 CRUD API 与图片上传功能**尚未实现**（`app/api` 目前仅有 `auth` 与 `health`），见 Roadmap。
 
 ---
 
