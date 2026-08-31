@@ -12,16 +12,19 @@ export async function GET() {
     .limit(20)
     .all();
 
+  // 转义 CDATA 结束符，避免正文/标题中的 "]]>" 破坏 XML 结构
+  const escapeCdata = (s: string) => s.replace(/\]\]>/g, "]]&gt;");
+
   const items = publishedPosts
     .map((post) => {
       const pubDate = post.createdAt.toUTCString();
       const description = post.content.replace(/<[^>]*>/g, "").slice(0, 300);
       return `    <item>
-      <title><![CDATA[${post.title}]]></title>
+      <title><![CDATA[${escapeCdata(post.title)}]]></title>
       <link>${env.SITE_URL}/blog/${post.slug}</link>
       <guid isPermaLink="true">${env.SITE_URL}/blog/${post.slug}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description><![CDATA[${description}]]></description>
+      <description><![CDATA[${escapeCdata(description)}]]></description>
     </item>`;
     })
     .join("\n");

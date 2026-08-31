@@ -5,21 +5,24 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38bdf8)](https://tailwindcss.com)
 [![Drizzle](https://img.shields.io/badge/Drizzle-ORM-c5f74f)](https://orm.drizzle.team)
-[![License: Private](https://img.shields.io/badge/License-Private-important)]()
+[![License: Private](https://img.shields.io/badge/License-Private-important)](<>)
 
-一个面向 **AI 程序员** 的个人网站：个人简介、GitHub 作品集、博客（含 RSS 订阅）、经历时间线。采用 **Anthropic 风格暖色毛玻璃 UI**，SQLite 单文件存储，自托管于 Linux 服务器，PM2 + Nginx 部署，HTTPS 访问（**gyoung.xyz**）。
+一个面向 **AI 程序员** 的个人网站：个人简介、GitHub 作品集、博客（含 RSS 订阅）、经历时间线。采用 **Liquid Glass 浅蓝紫液态玻璃 UI**（灵感源自 WWDC Liquid Glass 设计语言），SQLite 单文件存储，自托管于 Linux 服务器，PM2 + Nginx 部署，HTTPS 访问（**gyoung.xyz**）。
 
 ---
 
 ## ✨ 功能特性
 
-- **首页简介**：个人介绍、技能标签、GitHub 链接，由数据库驱动（ISR 每小时刷新）
+- **首页单页聚合**：Hero 简介（含打字机代码卡片）+ 精选项目（GitHub 真实数据）+ 技术栈（高清真实品牌 logo）+ 成长时间线 + 最新博客，滚动渐显（`whileInView`）
+- **玻璃导航栏**：Liquid Glass 半透明白玻璃条，`fixed` 固定在顶部，滚动时保持悬浮（顶部白色高光线）
+- **液态玻璃背景**：浅蓝→淡紫渐变 + 多层大尺寸光斑 + 两层 conic 流体渐变缓慢流动 + 磨砂噪点颗粒；`fixed` 定位，页面滚动时背景动效全程一致
+- **站点图标**：玻璃质感大写 G（矢量轮廓，从系统字体提取），SVG 任意尺寸清晰，透明背景
 - **作品集**：服务端拉取 GitHub 仓库（`fetch` + 5 分钟 `revalidate` 缓存），客户端搜索与排序，API 异常时优雅降级
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
 - **后台管理**（`/admin`）：登录 / 登出，数据统计概览
 - **安全**：iron-session 加密会话、bcrypt 密码哈希、登录限流、CSRF 校验、CSP 与安全响应头、`robots.txt` 屏蔽后台
-- **动效**：Framer Motion 进场动画 + CSS 背景光晕，尊重 `prefers-reduced-motion`
+- **动效**：Framer Motion 进场 / 滚动动画 + CSS 背景光晕 / 液态流动动画，尊重 `prefers-reduced-motion`
 
 ---
 
@@ -190,34 +193,34 @@ pm2 set pm2-logrotate:retain 7
 
 全部通过 `.env` 配置（**不进 Git**，`.env` 已在 `.gitignore`）。启动时由 Zod 校验格式；运行时校验关键配置（`lib/env.ts` 的 `assertRuntimeConfig`）。
 
-| 变量 | 必填 | 说明 |
-|---|---|---|
-| `GITHUB_TOKEN` | 建议 | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
-| `GITHUB_USERNAME` | 否 | GitHub 账号，默认 `G-YOUNG01` |
-| `ADMIN_USERNAME` | 否 | 后台用户名，默认 `admin` |
-| `ADMIN_PASSWORD_HASH` | **是** | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错 |
-| `SESSION_SECRET` | **是** | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值 |
-| `SITE_URL` | **是** | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用） |
-| `DATABASE_URL` | 否 | SQLite 连接串，默认 `file:./data.db` |
-| `NODE_ENV` | 否 | `development` / `production` / `test` |
+| 变量                  | 必填   | 说明                                                                                                      |
+| --------------------- | ------ | --------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`        | 建议   | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
+| `GITHUB_USERNAME`     | 否     | GitHub 账号，默认 `G-YOUNG01`                                                                             |
+| `ADMIN_USERNAME`      | 否     | 后台用户名，默认 `admin`                                                                                  |
+| `ADMIN_PASSWORD_HASH` | **是** | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错          |
+| `SESSION_SECRET`      | **是** | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值                                                    |
+| `SITE_URL`            | **是** | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）                                                        |
+| `DATABASE_URL`        | 否     | SQLite 连接串，默认 `file:./data.db`                                                                      |
+| `NODE_ENV`            | 否     | `development` / `production` / `test`                                                                     |
 
 ---
 
 ## 🛠 技术栈
 
-| 层 | 技术 | 说明 |
-|---|---|---|
-| 框架 | Next.js 16.3.3（App Router）+ React 19 | 前后端一体 |
-| 样式 | Tailwind CSS v4 + 全局 CSS | Anthropic 风格暖色毛玻璃 |
-| 动画 | Framer Motion | 进场 / 滚动动效，尊重 `prefers-reduced-motion` |
-| ORM | Drizzle ORM + `@libsql/client` | SQLite 单文件，迁移可控 |
-| 数据库 | SQLite（libSQL 本地文件） | 无需额外数据库服务 |
-| 认证 | iron-session + bcryptjs | 加密会话 Cookie + 密码哈希 |
-| 校验 | Zod | 环境变量 + API 请求体校验 |
-| XSS 过滤 | sanitize-html | 博客正文渲染前白名单过滤 |
-| 数据源 | GitHub REST API | 服务端拉取 + `revalidate` 缓存 |
-| 质量 | TypeScript strict + ESLint + Prettier | husky + lint-staged 提交前检查 |
-| 部署 | PM2（fork）+ Nginx + Let's Encrypt | 守护进程 + 反向代理 + HTTPS |
+| 层       | 技术                                   | 说明                                                    |
+| -------- | -------------------------------------- | ------------------------------------------------------- |
+| 框架     | Next.js 16.3.3（App Router）+ React 19 | 前后端一体                                              |
+| 样式     | Tailwind CSS v4 + 全局 CSS             | Liquid Glass 浅蓝紫液态玻璃（毛玻璃 / 高光 / 流体渐变） |
+| 动画     | Framer Motion                          | 进场 / 滚动动效，尊重 `prefers-reduced-motion`          |
+| ORM      | Drizzle ORM + `@libsql/client`         | SQLite 单文件，迁移可控                                 |
+| 数据库   | SQLite（libSQL 本地文件）              | 无需额外数据库服务                                      |
+| 认证     | iron-session + bcryptjs                | 加密会话 Cookie + 密码哈希                              |
+| 校验     | Zod                                    | 环境变量 + API 请求体校验                               |
+| XSS 过滤 | sanitize-html                          | 博客正文渲染前白名单过滤                                |
+| 数据源   | GitHub REST API                        | 服务端拉取 + `revalidate` 缓存                          |
+| 质量     | TypeScript strict + ESLint + Prettier  | husky + lint-staged 提交前检查                          |
+| 部署     | PM2（fork）+ Nginx + Let's Encrypt     | 守护进程 + 反向代理 + HTTPS                             |
 
 ---
 
@@ -238,14 +241,14 @@ SQLite 是单进程写锁数据库，PM2 cluster 多进程并发写会触发 `SQ
 ### 认证与安全
 
 - **iron-session**：登录成功写入加密 Cookie，`httpOnly` + `sameSite: 'lax'`，7 天过期，`secure` 按环境判断
-- **中间件**（`middleware.ts`）：`matcher: ['/admin/:path*']` 拦截未认证请求，重定向登录页
+- **路由代理**（`proxy.ts`，Next.js 16 新约定）：`matcher: ['/admin/:path*']` 拦截未认证请求，重定向登录页
 - **CSRF**：登录时生成 token 存入 session，登出表单带 `hidden` 字段，服务端比对（`/api/auth/logout` 校验）
 - **登录限流**：同 IP 15 分钟最多 5 次失败（内存计数，PM2 reload 后重置，属软限流）
 - **安全响应头**（`next.config.ts`）：生产环境 `Content-Security-Policy` + `X-Frame-Options: DENY` + `nosniff` + `Referrer-Policy` + `Permissions-Policy`
 
 ### 静态化
 
-- 首页 profile：`export const revalidate = 3600`（ISR 1 小时）
+- 首页 profile：`export const revalidate = 300`（ISR 5 分钟，首页含 GitHub 数据，与作品页缓存一致）
 - 作品页：`revalidate = 300`（5 分钟）
 - sitemap / RSS：动态生成
 
@@ -256,7 +259,7 @@ SQLite 是单进程写锁数据库，PM2 cluster 多进程并发写会触发 `SQ
 ```
 personal-website/
 ├── app/
-│   ├── page.tsx             # 首页（Hero 简介）
+│   ├── page.tsx             # 首页（Hero + 精选项目 + 技术栈 + 时间线 + 博客 单页聚合）
 │   ├── works/               # 作品集（GitHub 数据）
 │   ├── blog/                # 博客列表 + 详情
 │   ├── timeline/            # 经历时间线
@@ -264,21 +267,28 @@ personal-website/
 │   ├── api/                 # API 路由（auth / health）
 │   ├── rss.xml/             # RSS Feed
 │   ├── layout.tsx           # 根布局（导航 / 页脚 / 背景光晕 / JSON-LD）
-│   ├── globals.css          # 全局样式（毛玻璃 / 动画）
+│   ├── globals.css          # 全局样式（液态玻璃 / 高光 / 动画）
+│   ├── icon.svg             # 玻璃质感大 G 站点图标（SVG）
 │   ├── robots.ts / sitemap.ts
 │   ├── error.tsx / loading.tsx / not-found.tsx
-│   └── favicon.ico
 ├── components/
-│   ├── BackgroundGlow.tsx   # 背景光晕（CSS 动画）
-│   ├── Hero.tsx / Navbar.tsx / Footer.tsx
+│   ├── BackgroundGlow.tsx   # 液态玻璃背景（光晕 + 流体渐变 + 噪点）
+│   ├── Navbar.tsx           # 玻璃导航栏（fixed 悬浮）
+│   ├── Hero.tsx             # 首页 Hero（打字机代码卡片）
+│   ├── FeaturedProjects.tsx # 精选项目（GitHub 真实数据）
+│   ├── TechStack.tsx        # 技术栈（高清真实品牌 logo）
+│   ├── TimelineSection.tsx  # 首页时间线区块
+│   ├── LatestBlog.tsx       # 首页最新博客区块
 │   ├── WorksClient.tsx      # 作品集客户端交互（搜索 / 排序）
-│   └── RepoCard.tsx
+│   ├── RepoCard.tsx
+│   └── Footer.tsx
 ├── lib/
 │   ├── env.ts               # Zod 环境变量校验
 │   ├── auth/                # iron-session 配置 + 会话 / 限流
 │   ├── db/                  # Drizzle 连接 + schema
 │   └── github/              # GitHub API 拉取 + 语言配色
 ├── scripts/
+│   ├── gen_icon.py          # 从系统字体提取 G 轮廓生成站点图标
 │   ├── hash-password.mjs    # 生成密码哈希
 │   ├── seed.mjs             # 示例数据（幂等）
 │   ├── deploy.sh            # 部署脚本
@@ -286,7 +296,8 @@ personal-website/
 ├── drizzle/                 # 数据库迁移文件
 ├── uploads/                 # 上传文件预留（Nginx 直出，不入 Git）
 ├── public/                  # 静态资源
-├── middleware.ts            # /admin 路由保护
+│   └── icons/               # 技术栈高清真实品牌 logo（SVG，本地化）
+├── proxy.ts                 # /admin 路由保护（Next.js 16 proxy 约定）
 ├── next.config.ts           # 图片域名 / 安全响应头
 ├── drizzle.config.ts        # Drizzle 迁移配置
 ├── ecosystem.config.js      # PM2 配置
@@ -318,16 +329,16 @@ audit_logs: id, action, target_type, target_id,
 
 ## 📦 npm 脚本
 
-| 命令 | 说明 |
-|---|---|
-| `npm run dev` | 开发服务器 |
-| `npm run build` / `npm start` | 生产构建 / 启动 |
-| `npm run lint` / `format` | ESLint / Prettier |
-| `npm run db:generate` / `db:migrate` / `db:push` | Drizzle 迁移三件套 |
-| `npm run setup` | `npm install && npm run db:migrate` |
-| `npm run seed` | 写入示例数据（幂等） |
-| `npm run hash-password` | 生成管理员密码 bcrypt 哈希 |
-| `npm run deploy` | 服务器一键部署（`bash scripts/deploy.sh`） |
+| 命令                                             | 说明                                       |
+| ------------------------------------------------ | ------------------------------------------ |
+| `npm run dev`                                    | 开发服务器                                 |
+| `npm run build` / `npm start`                    | 生产构建 / 启动                            |
+| `npm run lint` / `format`                        | ESLint / Prettier                          |
+| `npm run db:generate` / `db:migrate` / `db:push` | Drizzle 迁移三件套                         |
+| `npm run setup`                                  | `npm install && npm run db:migrate`        |
+| `npm run seed`                                   | 写入示例数据（幂等）                       |
+| `npm run hash-password`                          | 生成管理员密码 bcrypt 哈希                 |
+| `npm run deploy`                                 | 服务器一键部署（`bash scripts/deploy.sh`） |
 
 ---
 
@@ -355,7 +366,7 @@ GET  /api/health         # 健康检查
 
 - [ ] **后台内容 CRUD**：文章 / 时间线 / 简介的增删改 API + 表单（当前仅概览）
 - [ ] 上传功能落地：封面图 / 正文插图 + 格式 / 大小 / 魔数校验
-- [ ] `middleware.ts` → `proxy` 迁移（Next.js 16 已弃用 middleware 约定）
+- [x] `middleware` → `proxy` 迁移（Next.js 16 已弃用 middleware 约定）
 - [ ] CSP 从 `'unsafe-inline'` 收紧为 nonce/hash 模式
 - [ ] 暗色 / 亮色主题切换
 - [ ] 评论区 / 访客统计 / 项目详情页

@@ -1,6 +1,7 @@
 /**
- * 站点背景光晕
- * 大尺寸高饱和度彩色光斑缓慢漂浮，配合毛玻璃卡片效果。
+ * 站点背景 - 高级磨砂玻璃质感
+ * fixed 固定定位：页面滚动时背景固定，动效全程一致。
+ * 柔和大面积浅色渐变 + 多层柔和光斑（模拟 iOS 壁纸景深）+ 细腻噪点颗粒（磨砂玻璃感）。
  * 动画由 CSS keyframes 驱动（定义见 globals.css）。
  */
 export default function BackgroundGlow() {
@@ -8,75 +9,139 @@ export default function BackgroundGlow() {
     <div
       aria-hidden="true"
       className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
-      style={{ background: "linear-gradient(135deg, #fef3e2 0%, #fce7f3 50%, #f3e8ff 100%)" }}
+      style={{
+        background:
+          "radial-gradient(120% 120% at 12% 8%, #eef6ff 0%, #f0f4ff 38%, #f5f1ff 68%, #fbf3ff 100%)",
+      }}
     >
-      {/* 主光晕 - 橙色 */}
+      {/* 主光斑 - 柔和蓝 */}
       <div
         className="absolute rounded-full"
         style={{
-          width: "700px",
-          height: "700px",
-          background: "radial-gradient(circle, rgba(251, 146, 60, 0.5) 0%, rgba(251, 146, 60, 0) 70%)",
-          filter: "blur(80px)",
-          top: "-15%",
-          left: "-10%",
-          animation: "float1 18s ease-in-out infinite",
+          width: "900px",
+          height: "900px",
+          background:
+            "radial-gradient(circle at 35% 35%, rgba(96,165,250,0.38) 0%, rgba(96,165,250,0.13) 45%, rgba(96,165,250,0) 70%)",
+          filter: "blur(90px)",
+          top: "-20%",
+          left: "-12%",
+          animation: "float1 26s ease-in-out infinite",
         }}
       />
 
-      {/* 第二光晕 - 粉色 */}
+      {/* 光斑 - 柔青 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "760px",
+          height: "760px",
+          background:
+            "radial-gradient(circle at 60% 30%, rgba(45,212,191,0.30) 0%, rgba(45,212,191,0.10) 45%, rgba(45,212,191,0) 70%)",
+          filter: "blur(90px)",
+          top: "6%",
+          right: "-14%",
+          animation: "float2 30s ease-in-out infinite",
+        }}
+      />
+
+      {/* 光斑 - 柔紫 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "820px",
+          height: "820px",
+          background:
+            "radial-gradient(circle at 50% 40%, rgba(167,139,250,0.34) 0%, rgba(167,139,250,0.12) 45%, rgba(167,139,250,0) 70%)",
+          filter: "blur(100px)",
+          bottom: "-24%",
+          left: "6%",
+          animation: "float3 32s ease-in-out infinite",
+        }}
+      />
+
+      {/* 光斑 - 柔粉 */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: "560px",
+          height: "560px",
+          background:
+            "radial-gradient(circle at 50% 40%, rgba(244,114,182,0.26) 0%, rgba(244,114,182,0.09) 45%, rgba(244,114,182,0) 70%)",
+          filter: "blur(80px)",
+          top: "34%",
+          left: "28%",
+          animation: "float4 24s ease-in-out infinite",
+        }}
+      />
+
+      {/* 光斑 - 柔蓝绿 */}
       <div
         className="absolute rounded-full"
         style={{
           width: "600px",
           height: "600px",
-          background: "radial-gradient(circle, rgba(244, 114, 182, 0.45) 0%, rgba(244, 114, 182, 0) 70%)",
-          filter: "blur(80px)",
-          top: "10%",
-          right: "-15%",
-          animation: "float2 22s ease-in-out infinite",
+          background:
+            "radial-gradient(circle at 50% 40%, rgba(56,189,248,0.28) 0%, rgba(56,189,248,0.10) 45%, rgba(56,189,248,0) 70%)",
+          filter: "blur(85px)",
+          bottom: "8%",
+          right: "-6%",
+          animation: "float5 28s ease-in-out infinite",
         }}
       />
 
-      {/* 第三光晕 - 紫色 */}
+      {/* 光斑 - 暖光点缀 */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full hidden md:block"
         style={{
-          width: "650px",
-          height: "650px",
-          background: "radial-gradient(circle, rgba(167, 139, 250, 0.45) 0%, rgba(167, 139, 250, 0) 70%)",
-          filter: "blur(80px)",
-          bottom: "-20%",
-          left: "15%",
-          animation: "float3 20s ease-in-out infinite",
-        }}
-      />
-
-      {/* 第四光晕 - 黄色 - 点缀 */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: "450px",
-          height: "450px",
-          background: "radial-gradient(circle, rgba(253, 224, 71, 0.4) 0%, rgba(253, 224, 71, 0) 70%)",
+          width: "420px",
+          height: "420px",
+          background:
+            "radial-gradient(circle at 50% 40%, rgba(253,186,116,0.26) 0%, rgba(253,186,116,0.08) 45%, rgba(253,186,116,0) 70%)",
           filter: "blur(70px)",
-          top: "45%",
-          left: "35%",
-          animation: "float4 16s ease-in-out infinite",
+          top: "62%",
+          right: "18%",
+          animation: "float2 34s ease-in-out infinite",
         }}
       />
 
-      {/* 第五光晕 - 青色 - 点缀 */}
+      {/* 液态玻璃 - 流动渐变层 1（大幅缓慢流动） */}
       <div
         className="absolute rounded-full"
         style={{
-          width: "400px",
-          height: "400px",
-          background: "radial-gradient(circle, rgba(94, 234, 212, 0.35) 0%, rgba(94, 234, 212, 0) 70%)",
-          filter: "blur(70px)",
-          bottom: "5%",
-          right: "10%",
-          animation: "float5 24s ease-in-out infinite",
+          width: "1100px",
+          height: "1100px",
+          background:
+            "conic-gradient(from 0deg at 40% 40%, rgba(96,165,250,0.20), rgba(167,139,250,0.14), rgba(45,212,191,0.16), rgba(96,165,250,0.20))",
+          filter: "blur(120px)",
+          top: "-30%",
+          left: "-18%",
+          animation: "liquid1 44s ease-in-out infinite",
+        }}
+      />
+
+      {/* 液态玻璃 - 流动渐变层 2（反向流动） */}
+      <div
+        className="absolute rounded-full hidden md:block"
+        style={{
+          width: "1000px",
+          height: "1000px",
+          background:
+            "conic-gradient(from 180deg at 60% 60%, rgba(139,92,246,0.16), rgba(56,189,248,0.16), rgba(244,114,182,0.12), rgba(139,92,246,0.16))",
+          filter: "blur(130px)",
+          bottom: "-35%",
+          right: "-20%",
+          animation: "liquid2 52s ease-in-out infinite",
+        }}
+      />
+
+      {/* 磨砂噪点颗粒 - 细腻玻璃质感 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "url('/noise.svg')",
+          backgroundSize: "240px 240px",
+          opacity: 0.5,
+          mixBlendMode: "soft-light",
         }}
       />
     </div>

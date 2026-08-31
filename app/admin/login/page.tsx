@@ -57,6 +57,7 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-3"
                 placeholder="admin"
+                autoComplete="username"
                 required
               />
             </div>
@@ -69,6 +70,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3"
                 placeholder="••••••••"
+                autoComplete="current-password"
                 required
               />
             </div>
