@@ -56,7 +56,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-3"
-                placeholder="admin"
+                placeholder="gyoung"
                 autoComplete="username"
                 required
               />
