@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import MainShell from "@/components/MainShell";
 import BackgroundGlow from "@/components/BackgroundGlow";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { env } from "@/lib/env";
@@ -58,9 +57,7 @@ export default function RootLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-          <Navbar />
-          <main className="pt-16">{children}</main>
-          <Footer />
+          <MainShell>{children}</MainShell>
         </LanguageProvider>
       </body>
     </html>

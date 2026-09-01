@@ -72,7 +72,7 @@ export default async function AdminPage() {
             编辑简介
           </Link>
           <Link href="/" target="_blank" className="btn-outline text-center text-sm">
-            查看网站
+            返回网站
           </Link>
         </div>
       </div>

@@ -23,6 +23,7 @@
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
 - **后台内容管理**（`/admin`）：文章 / 时间线 / 个人简介的完整增删改（CRUD API + 管理端表单），图片上传（魔数校验 + 5MB 限制），保存后前台实时生效；含数据统计概览与最近更新
+- **管理后台独立导航**：后台使用专属顶部玻璃胶囊导航（G-YOUNG 站点图标 + 管理菜单），替换主站导航，仅保留「返回 / 退出」入口（`MainShell` 按路由分发全局元素）
 - **安全**：iron-session 加密会话、bcrypt 密码哈希、登录限流、CSRF 校验、CSP 与安全响应头、`robots.txt` 屏蔽后台
 - **动效**：Framer Motion 进场 / 滚动动画 + CSS 背景光晕 / 液态流动动画，尊重 `prefers-reduced-motion`
 
@@ -51,7 +52,7 @@ npm run dev
 
 访问 `http://localhost:3000`。后台登录地址 `/admin`：
 
-- 用户名：`.env` 中的 `ADMIN_USERNAME`（默认 `admin`）
+- 用户名：`.env` 中的 `ADMIN_USERNAME`（本项目默认 `gyoung`）
 - 密码：`.env` 中的 `ADMIN_PASSWORD_HASH` 对应的明文（用 `npm run hash-password` 生成哈希后填入）
 
 > 后台登录**只校验环境变量**，与数据库 `users` 表无关；`seed` 写入的示例用户仅为历史预留。
@@ -213,7 +214,7 @@ pm2 set pm2-logrotate:retain 7
 | --------------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
 | `GITHUB_TOKEN`        | 建议           | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
 | `GITHUB_USERNAME`     | 否             | GitHub 账号，默认 `G-YOUNG01`                                                                             |
-| `ADMIN_USERNAME`      | 否             | 后台用户名，默认 `admin`                                                                                  |
+| `ADMIN_USERNAME`      | 否             | 后台用户名，默认 `gyoung`                                                                                 |
 | `ADMIN_PASSWORD_HASH` | **是**         | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错          |
 | `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                |
 | `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名    |
@@ -259,7 +260,7 @@ SQLite 是单进程写锁数据库，PM2 cluster 多进程并发写会触发 `SQ
 
 - **iron-session**：登录成功写入加密 Cookie，`httpOnly` + `sameSite: 'lax'`，7 天过期，`secure` 按环境判断
 - **路由代理**（`proxy.ts`，Next.js 16 新约定）：`matcher: ['/admin/:path*']` 拦截未认证请求，重定向登录页
-- **CSRF**：登录时生成 token 存入 session，登出表单带 `hidden` 字段，服务端比对（`/api/auth/logout` 校验）
+- **CSRF**：登录时生成 token 存入 session；所有写操作（登录 / 登出 / 文章 / 时间线 / 简介 / 上传）均带 `csrfToken` 字段，服务端比对（`lib/admin-api.ts`）
 - **登录限流**：同 IP 15 分钟最多 5 次失败（内存计数，PM2 reload 后重置，属软限流）
 - **安全响应头**（`next.config.ts`）：生产环境 `Content-Security-Policy` + `X-Frame-Options: DENY` + `nosniff` + `Referrer-Policy` + `Permissions-Policy`
 
@@ -280,11 +281,11 @@ personal-website/
 │   ├── works/               # 作品集（GitHub 数据）
 │   ├── blog/                # 博客列表 + 详情
 │   ├── timeline/            # 经历时间线
-│   ├── admin/               # 后台管理（概览 / 文章 / 时间线 / 简介）
+│   ├── admin/               # 后台管理（独立顶部导航 + 概览 / 文章 / 时间线 / 简介）
 │   ├── api/                 # API 路由（auth / health / posts / timelines / profile / upload）
 │   ├── uploads/[...path]/   # 开发环境上传图片代理（生产由 Nginx 直出）
 │   ├── rss.xml/             # RSS Feed
-│   ├── layout.tsx           # 根布局（导航 / 页脚 / 背景光晕 / JSON-LD）
+│   ├── layout.tsx           # 根布局（背景光晕 / JSON-LD，全局元素由 MainShell 分发）
 │   ├── globals.css          # 全局样式（液态玻璃 / 高光 / 动画）
 │   ├── icon.svg             # 玻璃质感大 G 站点图标（SVG）
 │   ├── robots.ts / sitemap.ts
@@ -292,6 +293,7 @@ personal-website/
 ├── components/
 │   ├── BackgroundGlow.tsx   # 液态玻璃背景（光晕 + 流体渐变 + 噪点）
 │   ├── Navbar.tsx           # 圆弧胶囊导航栏（DeepSeek 风格，fixed 悬浮）
+│   ├── MainShell.tsx        # 页面外壳：admin 路由不渲染主站导航 / 页脚
 │   ├── LanguageProvider.tsx # 中英文切换 Provider（Context + localStorage）
 │   ├── admin/               # 管理端组件（AdminNav / 文章 / 时间线 / 简介表单 / 删除按钮）
 │   ├── Hero.tsx             # 首页 Hero（名字动效 + 打字机代码卡片）
@@ -384,8 +386,6 @@ GET    /api/profile         # 个人简介（单行 id=1）
 PUT    /api/profile         # 更新个人简介（需登录 + CSRF）
 POST   /api/upload          # 图片上传（multipart，魔数校验 + 5MB，需登录 + CSRF）
 ```
-
-> 博客 / 时间线 / 简介的 CRUD API 与图片上传功能**尚未实现**（`app/api` 目前仅有 `auth` 与 `health`），见 Roadmap。
 
 ---
 
