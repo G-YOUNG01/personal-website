@@ -21,13 +21,18 @@ export default async function WorksPage() {
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-center">
         <h1 className="text-4xl font-bold mb-4">
           <span className="text-gradient">作品集</span>
         </h1>
         <p className="text-muted mb-6">暂时无法加载 GitHub 项目数据</p>
         <p className="text-sm text-muted mb-8">{error}</p>
-        <a href="https://github.com/G-YOUNG01" target="_blank" rel="noopener noreferrer" className="btn-primary">
+        <a
+          href="https://github.com/G-YOUNG01"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary"
+        >
           直接访问 GitHub
         </a>
       </div>

@@ -22,7 +22,7 @@ export default function LatestBlog({ posts }: LatestBlogProps) {
   const list = posts.slice(0, 2);
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20">
+    <section className="max-w-7xl mx-auto px-6 py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export default function LatestBlog({ posts }: LatestBlogProps) {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between mb-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">{t.latestBlog.title}</h2>
+        <h2 className="text-4xl font-bold tracking-tight">{t.latestBlog.title}</h2>
         <Link href="/blog" className="text-sm font-medium text-primary-light hover:underline">
           {t.latestBlog.viewAll}
         </Link>

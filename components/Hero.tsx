@@ -67,6 +67,8 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
     <span className="inline-block w-2 h-4 bg-sky-400 ml-0.5 align-middle animate-pulse" />
   );
   const shownBio = lang === "en" ? t.hero.bioEn : bio || t.hero.bioFallback;
+  // 技术栈标签：在现有技能基础上补充常用项（去重）
+  const shownSkills = [...new Set([...skills, "Git", "Linux", "TailwindCSS", "Vite"])];
 
   return (
     <motion.section
@@ -76,7 +78,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      <div className="max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
         {/* 左侧 - 简介 */}
         <div>
           <motion.div
@@ -85,7 +87,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-5"
           >
-            <span className="inline-flex items-center gap-2 text-sm font-medium text-primary-light">
+            <span className="inline-flex items-center gap-2 text-base font-medium text-primary-light">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               {t.hero.tagline}
             </span>
@@ -95,7 +97,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6"
+            className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6"
           >
             <span
               className="title-aurora"
@@ -134,7 +136,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-lg sm:text-xl text-muted max-w-xl leading-relaxed mb-8"
+            className="text-xl sm:text-2xl text-muted max-w-xl leading-relaxed mb-8"
           >
             {shownBio}
           </motion.p>
@@ -145,7 +147,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-wrap gap-2 mb-10"
           >
-            {skills.map((skill) => (
+            {shownSkills.map((skill) => (
               <span key={skill} className="tag">
                 {skill}
               </span>
@@ -190,7 +192,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative hidden sm:block"
+          className="relative hidden sm:block lg:w-[86%] lg:ml-auto"
         >
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-cyan-400/20 blur-2xl rounded-3xl -z-10" />
           <div className="card overflow-hidden">

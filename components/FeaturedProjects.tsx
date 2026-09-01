@@ -29,7 +29,7 @@ export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
   }
 
   return (
-    <section id="projects" className="max-w-6xl mx-auto px-6 py-20">
+    <section id="projects" className="max-w-7xl mx-auto px-6 py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -37,7 +37,7 @@ export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between mb-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">{t.featured.title}</h2>
+        <h2 className="text-4xl font-bold tracking-tight">{t.featured.title}</h2>
         <Link href="/works" className="text-sm font-medium text-primary-light hover:underline">
           {t.featured.viewAll}
         </Link>

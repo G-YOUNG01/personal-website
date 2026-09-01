@@ -13,10 +13,12 @@
 
 ## ✨ 功能特性
 
-- **首页单页聚合**：Hero 简介（含打字机代码卡片）+ 精选项目（GitHub 真实数据）+ 技术栈（高清真实品牌 logo）+ 成长时间线 + 最新博客，滚动渐显（`whileInView`）
-- **玻璃导航栏**：Liquid Glass 半透明白玻璃条，`fixed` 固定在顶部，滚动时保持悬浮（顶部白色高光线）
+- **首页单页聚合**：Hero 简介（含名字动效 + 打字机代码卡片）+ 精选项目（GitHub 真实数据）+ 技术栈（高清真实品牌 logo）+ 成长时间线 + 最新博客，滚动渐显（`whileInView`）
+- **圆弧胶囊导航栏**（DeepSeek 官网风格）：未滚动完全透明、与背景融为一体；向下滚动后浮现为居中的圆弧长椭圆胶囊（45% 白玻璃 + 12px 模糊 + 10% 黑边框），`fixed` 固定在顶部
+- **G-YOUNG 名字动效**（DeepSeek「探索未至之境」风）：流动渐变 + conic 旋转光晕 + 8 颗漂浮光点 + 鼠标悬停黑色聚光灯圈
+- **中英文切换**：全局 i18n（中文 / EN），导航右上角圆弧分段按钮，语言偏好写入 `localStorage` 记忆
 - **液态玻璃背景**：浅蓝→淡紫渐变 + 多层大尺寸光斑 + 两层 conic 流体渐变缓慢流动 + 磨砂噪点颗粒；`fixed` 定位，页面滚动时背景动效全程一致
-- **站点图标**：玻璃质感大写 G（矢量轮廓，从系统字体提取），SVG 任意尺寸清晰，透明背景
+- **站点图标**：玻璃质感大写 G（矢量轮廓，从系统字体提取），浏览器标签页与导航栏 Logo 同款，SVG 任意尺寸清晰，透明背景
 - **作品集**：服务端拉取 GitHub 仓库（`fetch` + 5 分钟 `revalidate` 缓存），客户端搜索与排序，API 异常时优雅降级
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
@@ -213,6 +215,7 @@ pm2 set pm2-logrotate:retain 7
 | 框架     | Next.js 16.3.3（App Router）+ React 19 | 前后端一体                                              |
 | 样式     | Tailwind CSS v4 + 全局 CSS             | Liquid Glass 浅蓝紫液态玻璃（毛玻璃 / 高光 / 流体渐变） |
 | 动画     | Framer Motion                          | 进场 / 滚动动效，尊重 `prefers-reduced-motion`          |
+| 国际化   | 自研轻量 i18n（Context）               | 中英文文案切换，无需额外依赖                            |
 | ORM      | Drizzle ORM + `@libsql/client`         | SQLite 单文件，迁移可控                                 |
 | 数据库   | SQLite（libSQL 本地文件）              | 无需额外数据库服务                                      |
 | 认证     | iron-session + bcryptjs                | 加密会话 Cookie + 密码哈希                              |
@@ -273,8 +276,9 @@ personal-website/
 │   ├── error.tsx / loading.tsx / not-found.tsx
 ├── components/
 │   ├── BackgroundGlow.tsx   # 液态玻璃背景（光晕 + 流体渐变 + 噪点）
-│   ├── Navbar.tsx           # 玻璃导航栏（fixed 悬浮）
-│   ├── Hero.tsx             # 首页 Hero（打字机代码卡片）
+│   ├── Navbar.tsx           # 圆弧胶囊导航栏（DeepSeek 风格，fixed 悬浮）
+│   ├── LanguageProvider.tsx # 中英文切换 Provider（Context + localStorage）
+│   ├── Hero.tsx             # 首页 Hero（名字动效 + 打字机代码卡片）
 │   ├── FeaturedProjects.tsx # 精选项目（GitHub 真实数据）
 │   ├── TechStack.tsx        # 技术栈（高清真实品牌 logo）
 │   ├── TimelineSection.tsx  # 首页时间线区块
@@ -284,6 +288,7 @@ personal-website/
 │   └── Footer.tsx
 ├── lib/
 │   ├── env.ts               # Zod 环境变量校验
+│   ├── i18n.ts              # 中英文文案字典（zh / en）
 │   ├── auth/                # iron-session 配置 + 会话 / 限流
 │   ├── db/                  # Drizzle 连接 + schema
 │   └── github/              # GitHub API 拉取 + 语言配色
