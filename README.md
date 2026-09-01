@@ -22,7 +22,7 @@
 - **作品集**：服务端拉取 GitHub 仓库（`fetch` + 5 分钟 `revalidate` 缓存），客户端搜索与排序，API 异常时优雅降级
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
-- **后台管理**（`/admin`）：登录 / 登出，数据统计概览
+- **后台内容管理**（`/admin`）：文章 / 时间线 / 个人简介的完整增删改（CRUD API + 管理端表单），图片上传（魔数校验 + 5MB 限制），保存后前台实时生效；含数据统计概览与最近更新
 - **安全**：iron-session 加密会话、bcrypt 密码哈希、登录限流、CSRF 校验、CSP 与安全响应头、`robots.txt` 屏蔽后台
 - **动效**：Framer Motion 进场 / 滚动动画 + CSS 背景光晕 / 液态流动动画，尊重 `prefers-reduced-motion`
 
@@ -280,8 +280,9 @@ personal-website/
 │   ├── works/               # 作品集（GitHub 数据）
 │   ├── blog/                # 博客列表 + 详情
 │   ├── timeline/            # 经历时间线
-│   ├── admin/               # 后台管理（登录 / 概览）
-│   ├── api/                 # API 路由（auth / health）
+│   ├── admin/               # 后台管理（概览 / 文章 / 时间线 / 简介）
+│   ├── api/                 # API 路由（auth / health / posts / timelines / profile / upload）
+│   ├── uploads/[...path]/   # 开发环境上传图片代理（生产由 Nginx 直出）
 │   ├── rss.xml/             # RSS Feed
 │   ├── layout.tsx           # 根布局（导航 / 页脚 / 背景光晕 / JSON-LD）
 │   ├── globals.css          # 全局样式（液态玻璃 / 高光 / 动画）
@@ -292,6 +293,7 @@ personal-website/
 │   ├── BackgroundGlow.tsx   # 液态玻璃背景（光晕 + 流体渐变 + 噪点）
 │   ├── Navbar.tsx           # 圆弧胶囊导航栏（DeepSeek 风格，fixed 悬浮）
 │   ├── LanguageProvider.tsx # 中英文切换 Provider（Context + localStorage）
+│   ├── admin/               # 管理端组件（AdminNav / 文章 / 时间线 / 简介表单 / 删除按钮）
 │   ├── Hero.tsx             # 首页 Hero（名字动效 + 打字机代码卡片）
 │   ├── FeaturedProjects.tsx # 精选项目（GitHub 真实数据）
 │   ├── TechStack.tsx        # 技术栈（高清真实品牌 logo）
@@ -302,6 +304,7 @@ personal-website/
 │   └── Footer.tsx
 ├── lib/
 │   ├── env.ts               # Zod 环境变量校验
+│   ├── admin-api.ts         # 后台 API 鉴权 + CSRF 校验
 │   ├── i18n.ts              # 中英文文案字典（zh / en）
 │   ├── auth/                # iron-session 配置 + 会话 / 限流
 │   ├── db/                  # Drizzle 连接 + schema
@@ -364,9 +367,22 @@ audit_logs: id, action, target_type, target_id,
 ## 🔌 API 接口
 
 ```
-POST /api/auth/login     # 登录（bcrypt + 限流，成功下发会话 + CSRF token）
-POST /api/auth/logout    # 登出（校验 CSRF token）
-GET  /api/health         # 健康检查
+POST   /api/auth/login      # 登录（bcrypt + 限流，成功下发会话 + CSRF token）
+POST   /api/auth/logout     # 登出（校验 CSRF token）
+GET    /api/health          # 健康检查
+GET    /api/posts           # 文章列表（?all=1 含草稿，公开默认仅已发布）
+POST   /api/posts           # 新建文章（需登录 + CSRF）
+GET    /api/posts/[id]      # 单篇文章
+PUT    /api/posts/[id]      # 更新文章（需登录 + CSRF）
+DELETE /api/posts/[id]      # 删除文章（需登录 + CSRF）
+GET    /api/timelines       # 时间线列表
+POST   /api/timelines       # 新建时间线（需登录 + CSRF）
+GET    /api/timelines/[id]  # 单条时间线
+PUT    /api/timelines/[id]  # 更新时间线（需登录 + CSRF）
+DELETE /api/timelines/[id]  # 删除时间线（需登录 + CSRF）
+GET    /api/profile         # 个人简介（单行 id=1）
+PUT    /api/profile         # 更新个人简介（需登录 + CSRF）
+POST   /api/upload          # 图片上传（multipart，魔数校验 + 5MB，需登录 + CSRF）
 ```
 
 > 博客 / 时间线 / 简介的 CRUD API 与图片上传功能**尚未实现**（`app/api` 目前仅有 `auth` 与 `health`），见 Roadmap。
@@ -383,8 +399,8 @@ GET  /api/health         # 健康检查
 
 ## 🚧 Roadmap
 
-- [ ] **后台内容 CRUD**：文章 / 时间线 / 简介的增删改 API + 表单（当前仅概览）
-- [ ] 上传功能落地：封面图 / 正文插图 + 格式 / 大小 / 魔数校验
+- [x] **后台内容 CRUD**：文章 / 时间线 / 简介的增删改 API + 管理端表单
+- [x] 上传功能落地：封面图 / 头像 + 魔数校验（file-type）+ 5MB 限制
 - [x] `middleware` → `proxy` 迁移（Next.js 16 已弃用 middleware 约定）
 - [ ] CSP 从 `'unsafe-inline'` 收紧为 nonce/hash 模式
 - [ ] 暗色 / 亮色主题切换

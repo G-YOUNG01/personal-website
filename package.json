@@ -24,6 +24,7 @@
     "@libsql/client": "^0.17.4",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.2",
+    "file-type": "^22.0.2",
     "framer-motion": "^13.1.1",
     "iron-session": "^8.0.4",
     "next": "16.3.3",
