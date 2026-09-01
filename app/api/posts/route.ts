@@ -20,8 +20,12 @@ const postSchema = z.object({
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  // 管理端传 ?all=1 返回全部；公开接口默认只返回已发布
+  // 管理端传 ?all=1 返回全部（含草稿），需登录；公开接口默认只返回已发布
   const all = searchParams.get("all") === "1";
+  if (all) {
+    const auth = await requireAdminApi();
+    if (!auth.ok) return auth.unauthorized;
+  }
   const rows = all
     ? await db.select().from(posts).orderBy(desc(posts.createdAt)).all()
     : await db

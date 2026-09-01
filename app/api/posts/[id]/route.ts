@@ -25,7 +25,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     .from(posts)
     .where(eq(posts.id, Number(id)))
     .get();
-  if (!row) {
+  // 公开接口：草稿不可见（与博客详情页行为一致）
+  if (!row || !row.published) {
     return NextResponse.json({ error: "文章不存在" }, { status: 404 });
   }
   return NextResponse.json(row);
