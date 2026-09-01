@@ -8,8 +8,8 @@ import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: {
-    default: "G-YOUNG | AI 程序员",
-    template: "%s | G-YOUNG",
+    default: "GYOUNG个人网站",
+    template: "%s | GYOUNG个人网站",
   },
   description: "AI 程序员个人网站 - 全栈开发、开源项目、技术博客与成长记录",
   keywords: ["AI 程序员", "全栈开发", "Next.js", "开源", "技术博客", "G-YOUNG"],
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "zh_CN",
     url: env.SITE_URL,
-    title: "G-YOUNG | AI 程序员",
+    title: "GYOUNG个人网站",
     description: "AI 程序员个人网站 - 全栈开发、开源项目、技术博客与成长记录",
-    siteName: "G-YOUNG",
+    siteName: "GYOUNG个人网站",
   },
   twitter: {
     card: "summary_large_image",
-    title: "G-YOUNG | AI 程序员",
+    title: "GYOUNG个人网站",
     description: "AI 程序员个人网站 - 全栈开发、开源项目、技术博客与成长记录",
   },
   robots: {
