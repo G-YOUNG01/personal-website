@@ -1,4 +1,4 @@
-# AI Programmer 个人网站
+# GYOUNG个人网站
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19-61dafb)](https://react.dev)
@@ -20,7 +20,11 @@
 - **液态玻璃背景**：浅蓝→淡紫渐变 + 多层大尺寸光斑 + 两层 conic 流体渐变缓慢流动 + 磨砂噪点颗粒；`fixed` 定位，页面滚动时背景动效全程一致
 - **站点图标**：玻璃质感大写 G（矢量轮廓，从系统字体提取），浏览器标签页与导航栏 Logo 同款，SVG 任意尺寸清晰，透明背景
 - **作品集**：服务端拉取 GitHub 仓库（`fetch` + 5 分钟 `revalidate` 缓存），客户端搜索与排序，API 异常时优雅降级
+- **项目详情页**：点击作品卡片进入仓库详情（`/works/[repo]`），展示 Stars / Forks / Issues / Watchers 统计、技术栈语言占比条形图（GitHub 实时数据）、Topics、内联渲染 README（`marked` + `sanitize-html` 过滤，相对图片/链接自动重写为 GitHub 绝对地址）
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
+- **博客增强**：关键词全文搜索 + 标签筛选（客户端即时过滤）、文章目录 TOC（滚动高亮，`IntersectionObserver`）、上一篇 / 下一篇导航
+- **访客统计**：全站 PV / 独立访客统计（SQLite 计数 + localStorage 访客 ID 去重），作品详情、博客列表与详情页展示浏览量，管理端概览显示总 PV / UV 与热门页面 Top
+- **评论区**（Giscus）：基于 GitHub Discussions 的零后端评论，集成于作品详情页与博客详情页；未配置 repo-id / category-id 时显示配置引导
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
 - **后台内容管理**（`/admin`）：文章 / 时间线 / 个人简介的完整增删改（CRUD API + 管理端表单），图片上传（魔数校验 + 5MB 限制），保存后前台实时生效；含数据统计概览与最近更新
 - **管理后台独立导航**：后台使用专属顶部玻璃胶囊导航（G-YOUNG 站点图标 + 管理菜单），替换主站导航，仅保留「返回 / 退出」入口（`MainShell` 按路由分发全局元素）
@@ -219,7 +223,13 @@ pm2 set pm2-logrotate:retain 7
 | `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                |
 | `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名    |
 | `DATABASE_URL`        | 否             | SQLite 连接串，默认 `file:./data.db`                                                                      |
+| `GISCUS_REPO`         | 否             | Giscus 评论区仓库，默认 `G-YOUNG01/personal-website`                                                      |
+| `GISCUS_REPO_ID`      | 否             | Giscus repo-id（在 giscus.app 配置后填入；为空则不渲染评论）                                              |
+| `GISCUS_CATEGORY`     | 否             | Giscus 讨论分类，默认 `General`                                                                           |
+| `GISCUS_CATEGORY_ID`  | 否             | Giscus category-id（在 giscus.app 配置后填入；为空则不渲染评论）                                          |
 | `NODE_ENV`            | 否             | `development` / `production` / `test`                                                                     |
+
+> **启用评论区**：① 在 GitHub 仓库 **Settings → General → Discussions** 开启 Discussions（需公开仓库）；② 打开 [giscus.app/zh-CN](https://giscus.app/zh-CN) 按页面指引连接仓库并生成 `repo-id` / `category-id`，填入上方 `GISCUS_REPO_ID` / `GISCUS_CATEGORY_ID`；③ 重启服务即生效。
 
 ---
 
@@ -235,7 +245,8 @@ pm2 set pm2-logrotate:retain 7
 | 数据库   | SQLite（libSQL 本地文件）              | 无需额外数据库服务                                      |
 | 认证     | iron-session + bcryptjs                | 加密会话 Cookie + 密码哈希                              |
 | 校验     | Zod                                    | 环境变量 + API 请求体校验                               |
-| XSS 过滤 | sanitize-html                          | 博客正文渲染前白名单过滤                                |
+| XSS 过滤 | sanitize-html                          | 博客正文 / README 渲染前白名单过滤                      |
+| Markdown | marked                                 | GitHub README 渲染（GFM）                               |
 | 数据源   | GitHub REST API                        | 服务端拉取 + `revalidate` 缓存                          |
 | 质量     | TypeScript strict + ESLint + Prettier  | husky + lint-staged 提交前检查                          |
 | 部署     | PM2（fork）+ Nginx + Let's Encrypt     | 守护进程 + 反向代理 + HTTPS                             |
@@ -279,10 +290,11 @@ personal-website/
 ├── app/
 │   ├── page.tsx             # 首页（Hero + 精选项目 + 技术栈 + 时间线 + 博客 单页聚合）
 │   ├── works/               # 作品集（GitHub 数据）
-│   ├── blog/                # 博客列表 + 详情
+│   │   └── [repo]/          # 项目详情页（统计 / 语言占比 / README）
+│   ├── blog/                # 博客列表 + 详情（搜索 / 标签 / TOC / 上下篇）
 │   ├── timeline/            # 经历时间线
 │   ├── admin/               # 后台管理（独立顶部导航 + 概览 / 文章 / 时间线 / 简介）
-│   ├── api/                 # API 路由（auth / health / posts / timelines / profile / upload）
+│   ├── api/                 # API 路由（auth / health / posts / timelines / profile / upload / stats）
 │   ├── uploads/[...path]/   # 开发环境上传图片代理（生产由 Nginx 直出）
 │   ├── rss.xml/             # RSS Feed
 │   ├── layout.tsx           # 根布局（背景光晕 / JSON-LD，全局元素由 MainShell 分发）
@@ -302,15 +314,21 @@ personal-website/
 │   ├── TimelineSection.tsx  # 首页时间线区块
 │   ├── LatestBlog.tsx       # 首页最新博客区块
 │   ├── WorksClient.tsx      # 作品集客户端交互（搜索 / 排序）
-│   ├── RepoCard.tsx
+│   ├── RepoCard.tsx         # 作品卡片（点击进详情页）
+│   ├── BlogExplorer.tsx     # 博客列表（全文搜索 + 标签筛选）
+│   ├── TocClient.tsx        # 文章目录（滚动高亮）
+│   ├── ViewCounter.tsx      # 浏览量统计（访客 ID 去重）
+│   ├── Giscus.tsx           # 评论区（GitHub Discussions）
 │   └── Footer.tsx
 ├── lib/
 │   ├── env.ts               # Zod 环境变量校验
 │   ├── admin-api.ts         # 后台 API 鉴权 + CSRF 校验
 │   ├── i18n.ts              # 中英文文案字典（zh / en）
+│   ├── readme.ts            # README Markdown 渲染（marked + sanitize + URL 重写）
+│   ├── toc.ts               # 文章目录提取（h2/h3 + 锚点注入）
 │   ├── auth/                # iron-session 配置 + 会话 / 限流
 │   ├── db/                  # Drizzle 连接 + schema
-│   └── github/              # GitHub API 拉取 + 语言配色
+│   └── github/              # GitHub API 拉取 + 语言配色 + 仓库详情
 ├── scripts/
 │   ├── gen_icon.py          # 从系统字体提取 G 轮廓生成站点图标
 │   ├── hash-password.mjs    # 生成密码哈希
@@ -343,6 +361,9 @@ profile:    id(=1), name, avatar_url, bio,
             skills(JSON), contacts(JSON)                     -- 个人简介（单行）
 audit_logs: id, action, target_type, target_id,
             detail(JSON), ip, created_at                     -- 操作日志（预留）
+page_views:  id, path(UNIQUE), views, unique_views,
+             updated_at                                      -- 页面访问统计（汇总）
+visitor_views: id, path, visitor_id, created_at              -- 访客去重（path+visitor 唯一）
 ```
 
 - 站点配置（profile）与内容（posts / timelines）分离，避免改配置污染内容表
@@ -385,13 +406,15 @@ DELETE /api/timelines/[id]  # 删除时间线（需登录 + CSRF）
 GET    /api/profile         # 个人简介（单行 id=1）
 PUT    /api/profile         # 更新个人简介（需登录 + CSRF）
 POST   /api/upload          # 图片上传（multipart，魔数校验 + 5MB，需登录 + CSRF）
+POST   /api/stats/visit     # 浏览上报（body: path + visitorId，PV+1 / UV 去重）
+GET    /api/stats/summary   # 全站统计（总 PV / 独立访客 / 热门页面 Top10）
 ```
 
 ---
 
 ## 🛡 服务器安全基线
 
-- SSH 禁用密码登录，改密钥认证 + 非默认端口；`fail2ban` 防暴力破解
+- SSH 禁用密码登录，改密钥认证；`fail2ban` 防暴力破解
 - 防火墙最小化放行：仅 SSH、80、443
 - 定期系统更新；Nginx 已配置安全响应头（与 `next.config.ts` 互补）
 
@@ -404,7 +427,10 @@ POST   /api/upload          # 图片上传（multipart，魔数校验 + 5MB，�
 - [x] `middleware` → `proxy` 迁移（Next.js 16 已弃用 middleware 约定）
 - [ ] CSP 从 `'unsafe-inline'` 收紧为 nonce/hash 模式
 - [ ] 暗色 / 亮色主题切换
-- [ ] 评论区 / 访客统计 / 项目详情页
+- [x] **项目详情页**：仓库统计 + 语言占比 + README 内联渲染（marked + sanitize）
+- [x] **访客统计**：PV / 独立访客 + 管理端概览统计卡与热门页面
+- [x] **评论区**：Giscus（GitHub Discussions 零后端）
+- [x] **博客增强**：全文搜索 + 标签筛选 + TOC 目录 + 上一篇 / 下一篇
 - [ ] 单元测试（Vitest，覆盖 GitHub 拉取、认证、数据库）
 - [ ] Docker 化部署
 
