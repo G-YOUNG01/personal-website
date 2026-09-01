@@ -126,10 +126,24 @@ curl https://gyoung.xyz/api/health
 ### 日常更新
 
 ```bash
-bash scripts/deploy.sh
+# 1. SSH 连接服务器（已禁用密码登录，仅密钥认证）
+ssh -i ~/.ssh/id_ed25519 root@<服务器IP>
+
+# 2. 一键部署
+cd /var/www/personal-website && bash scripts/deploy.sh
 ```
 
-`deploy.sh` 执行：**迁移前备份数据库 → `git pull` → `npm ci` → `drizzle-kit migrate` → `build` → `pm2 reload`**（`reload` 零停机切换）。任何一步失败即中止，避免脏数据上线。
+`deploy.sh` 会**自动判断**需要执行哪些步骤：
+
+| 步骤             | 触发条件                                                      |
+| ---------------- | ------------------------------------------------------------- |
+| 拉取代码         | 始终执行；`git pull` 超时自动降级为 `fetch + merge --ff-only` |
+| `npm ci`         | 仅当 `package.json` 变更或 `node_modules` 缺失                |
+| 备份 + `migrate` | 仅当 drizzle/schema/迁移文件变更（迁移前备份数据库）          |
+| `npm run build`  | 始终执行                                                      |
+| `pm2 reload`     | 始终执行（零停机切换）                                        |
+
+纯代码改动（无依赖 / 数据库变更）时整次部署约 20 秒。任何一步失败即中止（`set -e`），避免脏数据上线。
 
 **回滚**：代码问题 `git revert <commit>` 后重跑 deploy.sh。注意 **数据库迁移是 forward-only**（只会前进不会回退）：若新旧代码与新版 schema 不兼容，需先用备份恢复数据库再回滚代码。
 
