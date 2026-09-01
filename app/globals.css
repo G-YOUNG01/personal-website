@@ -59,6 +59,147 @@ body {
   background-clip: text;
 }
 
+/* ========== DeepSeek「探索未至之境」风格名字动效 ========== */
+.title-aurora {
+  position: relative;
+  display: inline-block;
+  -webkit-text-fill-color: initial;
+}
+
+/* 背后流动的光晕 */
+.title-aurora .aurora-blob {
+  position: absolute;
+  inset: -40% -30%;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    rgba(37, 99, 235, 0.4),
+    rgba(6, 182, 212, 0.35),
+    rgba(139, 92, 246, 0.4),
+    rgba(56, 189, 248, 0.35),
+    rgba(37, 99, 235, 0.4)
+  );
+  filter: blur(64px);
+  border-radius: 50%;
+  animation: aurora-spin 9s linear infinite;
+  opacity: 0.75;
+}
+
+/* 流动渐变的发光文字 */
+.title-aurora .title-shine {
+  background: linear-gradient(
+    110deg,
+    #1e3a8a 0%,
+    #2563eb 18%,
+    #06b6d4 38%,
+    #8b5cf6 55%,
+    #2563eb 78%,
+    #1e3a8a 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease-in-out infinite;
+  filter: drop-shadow(0 2px 26px rgba(99, 102, 241, 0.4));
+}
+
+/* 鼠标 hover 黑色圆圈 spotlight（DeepSeek「探索未至之境」） */
+.title-aurora .title-spotlight {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 140px at var(--mx, 50%) var(--my, 50%),
+    rgba(10, 18, 38, 0.95) 0%,
+    rgba(15, 23, 42, 0.55) 42%,
+    transparent 70%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.title-aurora:hover .title-spotlight {
+  opacity: 1;
+}
+
+/* 向下滚动文字：黑色圆圈 spotlight hover */
+.scroll-hint {
+  position: relative;
+}
+.scroll-hint .scroll-shine {
+  color: inherit;
+}
+.scroll-hint .scroll-spot {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 90px at var(--mx, 50%) var(--my, 50%),
+    rgba(10, 18, 38, 0.95) 0%,
+    rgba(15, 23, 42, 0.55) 42%,
+    transparent 70%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.scroll-hint:hover .scroll-spot {
+  opacity: 1;
+}
+
+/* 漂浮光点 */
+.title-aurora .spark {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: spark-float var(--dur, 6s) ease-in-out var(--delay, 0s) infinite;
+  opacity: 0;
+  box-shadow: 0 0 8px 1px currentColor;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+@keyframes aurora-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spark-float {
+  0% {
+    transform: translate(0, 6px) scale(0.4);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  60% {
+    transform: translate(6px, -30px) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-4px, -58px) scale(0.2);
+    opacity: 0;
+  }
+}
+
 /* ========== iOS 高级玻璃卡片 ========== */
 .card,
 .glow-border {

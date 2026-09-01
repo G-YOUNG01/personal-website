@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface TechStackProps {
   skills: string[];
@@ -30,6 +31,7 @@ const logoMap: Record<string, string> = {
 const extraSkills = ["Git", "TailwindCSS", "SQLite", "Vite", "C++", "Linux"];
 
 export default function TechStack({ skills }: TechStackProps) {
+  const { t } = useLanguage();
   const base = skills.length > 0 ? skills : [];
   const list = [...new Set([...base, ...extraSkills])].filter((s) => logoMap[s]);
 
@@ -42,8 +44,8 @@ export default function TechStack({ skills }: TechStackProps) {
         transition={{ duration: 0.5 }}
         className="text-center mb-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">技术栈</h2>
-        <p className="text-muted mt-2 text-sm">持续探索与使用中的技术</p>
+        <h2 className="text-3xl font-bold tracking-tight">{t.techstack.title}</h2>
+        <p className="text-muted mt-2 text-sm">{t.techstack.subtitle}</p>
       </motion.div>
 
       <div className="flex flex-wrap justify-center gap-4">

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export interface PostItem {
   id: number;
@@ -17,6 +18,7 @@ interface LatestBlogProps {
 }
 
 export default function LatestBlog({ posts }: LatestBlogProps) {
+  const { t, lang } = useLanguage();
   const list = posts.slice(0, 2);
 
   return (
@@ -28,18 +30,18 @@ export default function LatestBlog({ posts }: LatestBlogProps) {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between mb-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">最新博客</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t.latestBlog.title}</h2>
         <Link href="/blog" className="text-sm font-medium text-primary-light hover:underline">
-          查看全部文章 →
+          {t.latestBlog.viewAll}
         </Link>
       </motion.div>
 
       {list.length === 0 ? (
-        <div className="card p-10 text-center text-muted">暂无文章，敬请期待</div>
+        <div className="card p-10 text-center text-muted">{t.latestBlog.empty}</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {list.map((post, i) => {
-            const date = post.createdAt.toLocaleDateString("zh-CN");
+            const date = post.createdAt.toLocaleDateString(lang === "en" ? "en-US" : "zh-CN");
             const summary = post.content.replace(/<[^>]*>/g, "").slice(0, 80);
             return (
               <motion.div
@@ -62,7 +64,7 @@ export default function LatestBlog({ posts }: LatestBlogProps) {
                   </h3>
                   <p className="text-sm text-muted mb-4 line-clamp-2">{summary}...</p>
                   <span className="text-sm font-medium text-primary-light group-hover:underline">
-                    阅读全文 →
+                    {t.latestBlog.readMore}
                   </span>
                 </Link>
               </motion.div>

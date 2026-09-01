@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface HeroProps {
   name: string;
@@ -20,6 +21,18 @@ const codeLines = [
   { indent: 1, text: "belief: 'Code changes the world'", color: "text-sky-300" },
   { indent: 0, text: "}", color: "text-slate-200" },
   { indent: 0, text: "// Let's build the future together! 🚀", color: "text-slate-400" },
+];
+
+/** 名字周围漂浮的光点（DeepSeek「未至之境」风格） */
+const sparks = [
+  { left: "-4%", top: "10%", color: "#93c5fd", delay: "0s", dur: "5s" },
+  { left: "103%", top: "2%", color: "#c4b5fd", delay: "1.2s", dur: "6.5s" },
+  { left: "58%", top: "-32%", color: "#67e8f9", delay: "0.6s", dur: "5.5s" },
+  { left: "18%", top: "-22%", color: "#a5b4fc", delay: "2s", dur: "7s" },
+  { left: "88%", top: "72%", color: "#93c5fd", delay: "0.3s", dur: "5.8s" },
+  { left: "-8%", top: "62%", color: "#c4b5fd", delay: "1.6s", dur: "6.2s" },
+  { left: "42%", top: "98%", color: "#67e8f9", delay: "0.9s", dur: "6.8s" },
+  { left: "110%", top: "46%", color: "#a5b4fc", delay: "2.4s", dur: "5.2s" },
 ];
 
 /** 代码打字机效果 */
@@ -48,10 +61,12 @@ function useTyping(lines: { indent: number; text: string }[], speed = 14) {
 }
 
 export default function Hero({ name, bio, skills, contacts }: HeroProps) {
+  const { lang, t } = useLanguage();
   const { visibleLines, currentLine, charCount } = useTyping(codeLines);
   const cursor = (
     <span className="inline-block w-2 h-4 bg-sky-400 ml-0.5 align-middle animate-pulse" />
   );
+  const shownBio = lang === "en" ? t.hero.bioEn : bio || t.hero.bioFallback;
 
   return (
     <motion.section
@@ -72,7 +87,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
           >
             <span className="inline-flex items-center gap-2 text-sm font-medium text-primary-light">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              AI 程序员 / 全栈开发者 / 开源爱好者
+              {t.hero.tagline}
             </span>
           </motion.div>
 
@@ -82,7 +97,37 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6"
           >
-            <span className="text-gradient">{name}</span>
+            <span
+              className="title-aurora"
+              aria-label={name}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                e.currentTarget.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+                e.currentTarget.style.setProperty("--my", `${e.clientY - rect.top}px`);
+              }}
+            >
+              <span className="aurora-blob" aria-hidden="true" />
+              <span className="title-shine" aria-hidden="true">
+                {name}
+              </span>
+              <span className="title-spotlight" aria-hidden="true">
+                {name}
+              </span>
+              {sparks.map((s, i) => (
+                <span
+                  key={i}
+                  aria-hidden="true"
+                  className="spark"
+                  style={{
+                    left: s.left,
+                    top: s.top,
+                    color: s.color,
+                    ["--dur" as string]: s.dur,
+                    ["--delay" as string]: s.delay,
+                  }}
+                />
+              ))}
+            </span>
           </motion.h1>
 
           <motion.p
@@ -91,7 +136,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="text-lg sm:text-xl text-muted max-w-xl leading-relaxed mb-8"
           >
-            {bio}
+            {shownBio}
           </motion.p>
 
           <motion.div
@@ -114,7 +159,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
             className="flex flex-wrap gap-4"
           >
             <Link href="/works" className="btn-primary">
-              查看我的作品
+              {t.hero.viewWorks}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -125,7 +170,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
               </svg>
             </Link>
             <Link href="/blog" className="btn-outline">
-              阅读技术博客
+              {t.hero.readBlog}
             </Link>
             {contacts.github && (
               <a
@@ -137,34 +182,6 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
                 GitHub ↗
               </a>
             )}
-          </motion.div>
-
-          {/* 向下滚动 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-            className="mt-14 hidden lg:block"
-          >
-            <a
-              href="#projects"
-              className="inline-flex items-center gap-2 text-sm text-muted hover:text-primary-light transition-colors"
-            >
-              向下滚动
-              <svg
-                className="w-4 h-4 animate-bounce"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                />
-              </svg>
-            </a>
           </motion.div>
         </div>
 
@@ -182,7 +199,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
               <span className="w-3 h-3 rounded-full bg-red-400" />
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
               <span className="w-3 h-3 rounded-full bg-green-400" />
-              <span className="ml-3 text-xs text-muted font-mono">developer.ts</span>
+              <span className="ml-3 text-xs text-muted font-mono">{t.hero.developerTs}</span>
             </div>
             {/* 代码区 */}
             <pre className="!bg-slate-900 !rounded-none !border-0 !shadow-none min-h-[280px]">

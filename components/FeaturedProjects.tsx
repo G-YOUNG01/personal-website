@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import type { GitHubRepo } from "@/lib/github";
 import { languageColors } from "@/lib/github";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface FeaturedProjectsProps {
   repos: GitHubRepo[];
@@ -11,6 +12,7 @@ interface FeaturedProjectsProps {
 
 /** 精选项目（取 star 数最高的 4 个） */
 export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
+  const { t } = useLanguage();
   const featured = [...repos]
     .filter((r) => !r.fork && r.stargazers_count > 0)
     .sort((a, b) => b.stargazers_count - a.stargazers_count)
@@ -35,9 +37,9 @@ export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between mb-10"
       >
-        <h2 className="text-3xl font-bold tracking-tight">精选项目</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t.featured.title}</h2>
         <Link href="/works" className="text-sm font-medium text-primary-light hover:underline">
-          查看全部项目 →
+          {t.featured.viewAll}
         </Link>
       </motion.div>
 
@@ -78,7 +80,7 @@ export default function FeaturedProjects({ repos }: FeaturedProjectsProps) {
                 </svg>
               </div>
               <p className="text-sm text-muted mb-4 line-clamp-2 min-h-[2.5rem]">
-                {repo.description || "暂无描述"}
+                {repo.description || t.featured.noDesc}
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1.5">

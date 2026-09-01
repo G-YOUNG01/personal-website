@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="border-t border-border mt-20">
       <div className="max-w-5xl mx-auto px-6 py-10">
@@ -9,9 +13,7 @@ export default function Footer() {
             <Link href="/" className="text-base font-bold tracking-tight">
               G-YOUNG
             </Link>
-            <p className="text-sm text-muted mt-1">
-              AI 程序员 · 全栈开发 · 开源爱好者
-            </p>
+            <p className="text-sm text-muted mt-1">{t.footer.tagline}</p>
           </div>
 
           <div className="flex items-center gap-6">
@@ -23,21 +25,30 @@ export default function Footer() {
             >
               GitHub
             </a>
-            <Link href="/blog" className="text-sm text-muted hover:text-foreground transition-colors">
-              博客
+            <Link
+              href="/blog"
+              className="text-sm text-muted hover:text-foreground transition-colors"
+            >
+              {t.footer.blog}
             </Link>
-            <Link href="/works" className="text-sm text-muted hover:text-foreground transition-colors">
-              作品
+            <Link
+              href="/works"
+              className="text-sm text-muted hover:text-foreground transition-colors"
+            >
+              {t.footer.works}
             </Link>
-            <Link href="/timeline" className="text-sm text-muted hover:text-foreground transition-colors">
-              时间线
+            <Link
+              href="/timeline"
+              className="text-sm text-muted hover:text-foreground transition-colors"
+            >
+              {t.footer.timeline}
             </Link>
           </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-xs text-muted">
-            © {new Date().getFullYear()} G-YOUNG. Built with Next.js.
+            © {new Date().getFullYear()} G-YOUNG. {t.footer.builtWith}
           </p>
         </div>
       </div>

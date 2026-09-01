@@ -3,17 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-
-const navItems = [
-  { href: "/", label: "首页" },
-  { href: "/works", label: "作品集" },
-  { href: "/blog", label: "技术博客" },
-  { href: "/timeline", label: "成长时间线" },
-  { href: "/#about", label: "关于我" },
-];
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { t, lang, toggle } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -22,6 +16,14 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const navItems = [
+    { href: "/", label: t.nav.home },
+    { href: "/works", label: t.nav.works },
+    { href: "/blog", label: t.nav.blog },
+    { href: "/timeline", label: t.nav.timeline },
+    { href: "/#about", label: t.nav.about },
+  ];
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -37,7 +39,13 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-lg font-bold tracking-tight text-foreground">
+          <Link
+            href="/"
+            className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2"
+          >
+            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 text-white text-[15px] font-black flex items-center justify-center shadow-sm">
+              G
+            </span>
             G-YOUNG
           </Link>
 
@@ -47,17 +55,26 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                  isActive(item.href)
-                    ? "text-primary-light bg-blue-500/10"
-                    : "text-muted hover:text-foreground hover:bg-white/60"
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive(item.href) ? "text-primary-light" : "text-muted hover:text-foreground"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
-            <a href="mailto:hello@gyoung.xyz" className="ml-3 btn-primary !py-2 !px-4 !text-sm">
-              联系我
+
+            {/* 语言切换（DeepSeek 风格：右上角文字按钮） */}
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={t.nav.menu}
+              className="ml-2 px-3 py-2 rounded-lg text-sm font-medium text-muted hover:text-foreground hover:bg-white/60 transition-colors border border-white/50 bg-white/40"
+            >
+              {lang === "zh" ? "EN" : "中文"}
+            </button>
+
+            <a href="mailto:hello@gyoung.xyz" className="ml-2 btn-primary !py-2 !px-4 !text-sm">
+              {t.nav.contact}
             </a>
           </div>
 
@@ -65,7 +82,7 @@ export default function Navbar() {
           <button
             className="md:hidden p-2 text-foreground"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="菜单"
+            aria-label={t.nav.menu}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
           >
@@ -102,18 +119,25 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className={`block px-4 py-3 rounded-xl text-sm font-medium mx-2 ${
                   isActive(item.href)
-                    ? "bg-blue-500/10 text-primary-light"
+                    ? "text-primary-light"
                     : "text-muted hover:text-foreground hover:bg-white/60"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={toggle}
+              className="block px-4 py-3 mx-2 text-sm font-medium text-muted"
+            >
+              {lang === "zh" ? "Switch to English / EN" : "切换到中文"}
+            </button>
             <a
               href="mailto:hello@gyoung.xyz"
               className="block px-4 py-3 mx-2 text-sm font-medium text-primary-light"
             >
-              联系我
+              {t.nav.contact}
             </a>
           </div>
         )}

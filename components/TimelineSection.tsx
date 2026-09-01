@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export interface TimelineItem {
   id: number;
@@ -28,6 +29,7 @@ const iconMap: Record<string, string> = {
 
 /** 成长时间线 - 横向 4 节点 */
 export default function TimelineSection({ items }: TimelineSectionProps) {
+  const { t } = useLanguage();
   // 取年份最近的 4 条（展示近期成长节点），再按时间升序排列
   const list = [...items]
     .sort((a, b) => b.year - a.year)
@@ -43,9 +45,9 @@ export default function TimelineSection({ items }: TimelineSectionProps) {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between mb-12"
       >
-        <h2 className="text-3xl font-bold tracking-tight">成长时间线</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t.timeline.title}</h2>
         <Link href="/timeline" className="text-sm font-medium text-primary-light hover:underline">
-          查看完整历程 →
+          {t.timeline.viewAll}
         </Link>
       </motion.div>
 
