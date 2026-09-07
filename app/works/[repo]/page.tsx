@@ -5,7 +5,6 @@ import { env } from "@/lib/env";
 import { fetchRepoDetail, fetchRepoLanguages, fetchRepoReadme, languageColors } from "@/lib/github";
 import { renderMarkdownHtml, rewriteGithubUrls } from "@/lib/readme";
 import ViewCounter from "@/components/ViewCounter";
-import Giscus from "@/components/Giscus";
 
 export const revalidate = 300; // 5 分钟重新验证
 
@@ -168,15 +167,6 @@ export default async function RepoDetailPage({ params }: RepoDetailPageProps) {
           <div className="text-center py-16 text-muted">该仓库暂无 README</div>
         )}
       </section>
-
-      {/* 评论区（Giscus） */}
-      <Giscus
-        repo={env.GISCUS_REPO}
-        repoId={env.GISCUS_REPO_ID}
-        category={env.GISCUS_CATEGORY}
-        categoryId={env.GISCUS_CATEGORY_ID}
-        term={`works/${detail.name}`}
-      />
     </article>
   );
 }

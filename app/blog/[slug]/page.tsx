@@ -9,7 +9,6 @@ import { env } from "@/lib/env";
 import { extractToc } from "@/lib/toc";
 import TocClient from "@/components/TocClient";
 import ViewCounter from "@/components/ViewCounter";
-import Giscus from "@/components/Giscus";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -170,15 +169,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           )}
         </div>
       )}
-
-      {/* 评论区（Giscus） */}
-      <Giscus
-        repo={env.GISCUS_REPO}
-        repoId={env.GISCUS_REPO_ID}
-        category={env.GISCUS_CATEGORY}
-        categoryId={env.GISCUS_CATEGORY_ID}
-        term={`blog/${post.slug}`}
-      />
 
       <div className="mt-10 pt-8 border-t border-border">
         <Link href="/blog" className="text-primary-light hover:underline">

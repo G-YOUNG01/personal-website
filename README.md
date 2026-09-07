@@ -25,7 +25,6 @@
 - **博客**：文章列表 + 详情页，`sanitize-html` 白名单过滤防 XSS，支持 RSS（`/rss.xml`）、动态 sitemap、JSON-LD 结构化数据
 - **博客增强**：关键词全文搜索 + 标签筛选（客户端即时过滤）、文章目录 TOC（滚动高亮，`IntersectionObserver`）、上一篇 / 下一篇导航
 - **访客统计**：全站 PV / 独立访客统计（SQLite 计数 + localStorage 访客 ID 去重），作品详情、博客列表与详情页展示浏览量，管理端概览显示总 PV / UV 与热门页面 Top
-- **评论区**（Giscus）：基于 GitHub Discussions 的零后端评论，集成于作品详情页与博客详情页；未配置 repo-id / category-id 时显示配置引导
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
 - **后台内容管理**（`/admin`）：文章 / 时间线 / 个人简介的完整增删改（CRUD API + 管理端表单），图片上传（魔数校验 + 5MB 限制），保存后前台实时生效；含数据统计概览与最近更新
 - **管理后台独立导航**：后台使用专属顶部玻璃胶囊导航（G-YOUNG 站点图标 + 管理菜单），替换主站导航，仅保留「返回 / 退出」入口（`MainShell` 按路由分发全局元素）
@@ -224,13 +223,7 @@ pm2 set pm2-logrotate:retain 7
 | `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                |
 | `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名    |
 | `DATABASE_URL`        | 否             | SQLite 连接串，默认 `file:./data.db`                                                                      |
-| `GISCUS_REPO`         | 否             | Giscus 评论区仓库，默认 `G-YOUNG01/personal-website`                                                      |
-| `GISCUS_REPO_ID`      | 否             | Giscus repo-id（在 giscus.app 配置后填入；为空则不渲染评论）                                              |
-| `GISCUS_CATEGORY`     | 否             | Giscus 讨论分类，默认 `General`                                                                           |
-| `GISCUS_CATEGORY_ID`  | 否             | Giscus category-id（在 giscus.app 配置后填入；为空则不渲染评论）                                          |
 | `NODE_ENV`            | 否             | `development` / `production` / `test`                                                                     |
-
-> **启用评论区**：① 在 GitHub 仓库 **Settings → General → Discussions** 开启 Discussions（需公开仓库）；② 打开 [giscus.app/zh-CN](https://giscus.app/zh-CN) 按页面指引连接仓库并生成 `repo-id` / `category-id`，填入上方 `GISCUS_REPO_ID` / `GISCUS_CATEGORY_ID`；③ 重启服务即生效。
 
 ---
 
@@ -319,7 +312,6 @@ personal-website/
 │   ├── BlogExplorer.tsx     # 博客列表（全文搜索 + 标签筛选）
 │   ├── TocClient.tsx        # 文章目录（滚动高亮）
 │   ├── ViewCounter.tsx      # 浏览量统计（访客 ID 去重）
-│   ├── Giscus.tsx           # 评论区（GitHub Discussions）
 │   └── Footer.tsx
 ├── lib/
 │   ├── env.ts               # Zod 环境变量校验
@@ -430,7 +422,6 @@ GET    /api/stats/summary   # 全站统计（总 PV / 独立访客 / 热门页�
 - [x] **暗色 / 亮色主题切换**：全站 CSS 变量双主题 + 防 FOUC + 深色玻璃质感
 - [x] **项目详情页**：仓库统计 + 语言占比 + README 内联渲染（marked + sanitize）
 - [x] **访客统计**：PV / 独立访客 + 管理端概览统计卡与热门页面
-- [x] **评论区**：Giscus（GitHub Discussions 零后端）
 - [x] **博客增强**：全文搜索 + 标签筛选 + TOC 目录 + 上一篇 / 下一篇
 - [ ] 单元测试（Vitest，覆盖 GitHub 拉取、认证、数据库）
 - [ ] Docker 化部署

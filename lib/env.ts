@@ -9,10 +9,6 @@ const envSchema = z.object({
   SESSION_SECRET: z.string().default("placeholder_session_secret_at_least_32_characters_long"),
   SITE_URL: z.string().default("http://localhost:3000"),
   DATABASE_URL: z.string().default("file:./data.db"),
-  GISCUS_REPO: z.string().default("G-YOUNG01/personal-website"),
-  GISCUS_REPO_ID: z.string().default(""),
-  GISCUS_CATEGORY: z.string().default("General"),
-  GISCUS_CATEGORY_ID: z.string().default(""),
 });
 
 const parsed = envSchema.safeParse(process.env);
