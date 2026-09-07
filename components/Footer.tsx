@@ -50,6 +50,15 @@ export default function Footer() {
           <p className="text-xs text-muted">
             © {new Date().getFullYear()} G-YOUNG. {t.footer.builtWith}
           </p>
+          {/* ICP 备案号（法规要求：链至工信部备案系统） */}
+          <a
+            href="https://beian.miit.gov.cn/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block text-xs text-muted hover:text-foreground transition-colors"
+          >
+            湘ICP备2026038839号-1
+          </a>
         </div>
       </div>
     </footer>
