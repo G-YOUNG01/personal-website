@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import RepoCard from "@/components/RepoCard";
+import GlassSelect from "@/components/GlassSelect";
 import type { GitHubRepo } from "@/lib/github";
 
 interface WorksClientProps {
@@ -63,16 +64,16 @@ export default function WorksClient({ repos }: WorksClientProps) {
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-4 py-3"
         />
-        <select
+        <GlassSelect
           value={sortKey}
-          onChange={(e) => setSortKey(e.target.value as SortKey)}
-          aria-label="排序方式"
-          className="px-4 py-3 cursor-pointer"
-        >
-          <option value="updated">最近更新</option>
-          <option value="stars">Star 数</option>
-          <option value="name">名称</option>
-        </select>
+          onChange={(v) => setSortKey(v as SortKey)}
+          ariaLabel="排序方式"
+          options={[
+            { value: "updated", label: "最近更新" },
+            { value: "stars", label: "Star 数" },
+            { value: "name", label: "名称" },
+          ]}
+        />
       </div>
 
       {/* 项目网格 */}

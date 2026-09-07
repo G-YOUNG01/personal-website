@@ -9,6 +9,10 @@ const envSchema = z.object({
   SESSION_SECRET: z.string().default("placeholder_session_secret_at_least_32_characters_long"),
   SITE_URL: z.string().default("http://localhost:3000"),
   DATABASE_URL: z.string().default("file:./data.db"),
+  GISCUS_REPO: z.string().default("G-YOUNG01/personal-website"),
+  GISCUS_REPO_ID: z.string().default(""),
+  GISCUS_CATEGORY: z.string().default("General"),
+  GISCUS_CATEGORY_ID: z.string().default(""),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -25,7 +29,9 @@ export const env = parsed.data;
 // 运行时校验关键配置（构建时用占位值通过）
 export function assertRuntimeConfig() {
   if (env.ADMIN_PASSWORD_HASH === "placeholder_hash") {
-    throw new Error("ADMIN_PASSWORD_HASH is not configured. Run `npm run hash-password` to generate.");
+    throw new Error(
+      "ADMIN_PASSWORD_HASH is not configured. Run `npm run hash-password` to generate.",
+    );
   }
   if (env.GITHUB_TOKEN === "ghp_placeholder") {
     console.warn("⚠️ GITHUB_TOKEN is not configured, GitHub API will be rate-limited");

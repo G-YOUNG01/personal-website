@@ -197,7 +197,7 @@ export default function Hero({ name, bio, skills, contacts }: HeroProps) {
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-cyan-400/20 blur-2xl rounded-3xl -z-10" />
           <div className="card overflow-hidden">
             {/* 标题栏 */}
-            <div className="flex items-center gap-2 px-5 py-3.5 bg-white/60 border-b border-white/60">
+            <div className="flex items-center gap-2 px-5 py-3.5 bg-white/60 dark:bg-slate-800/70 border-b border-white/60 dark:border-white/10">
               <span className="w-3 h-3 rounded-full bg-red-400" />
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
               <span className="w-3 h-3 rounded-full bg-green-400" />

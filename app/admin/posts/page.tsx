@@ -45,7 +45,10 @@ export default async function AdminPostsPage() {
             </thead>
             <tbody>
               {rows.map((p) => (
-                <tr key={p.id} className="border-b border-slate-100 hover:bg-slate-50/60">
+                <tr
+                  key={p.id}
+                  className="border-b border-slate-100 dark:border-white/10 hover:bg-slate-50/60 dark:hover:bg-white/5"
+                >
                   <td className="py-3 px-4 font-medium max-w-[260px] truncate">{p.title}</td>
                   <td className="py-3 px-4 hidden md:table-cell text-muted font-mono text-xs">
                     {p.slug}
@@ -68,7 +71,7 @@ export default async function AdminPostsPage() {
                         已发布
                       </span>
                     ) : (
-                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-500/10 text-slate-500">
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-500/10 dark:bg-white/10 text-slate-500 dark:text-slate-300">
                         草稿
                       </span>
                     )}

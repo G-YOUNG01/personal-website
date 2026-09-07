@@ -62,7 +62,7 @@ export default function TimelineSection({ items }: TimelineSectionProps) {
             className="relative card p-6"
           >
             {/* 顶部连线 */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white border-2 border-blue-500 flex items-center justify-center shadow">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border-2 border-blue-500 flex items-center justify-center shadow">
               <span className="text-[10px] font-bold text-blue-500">
                 {iconMap[item.iconType || ""] || "📌"}
               </span>

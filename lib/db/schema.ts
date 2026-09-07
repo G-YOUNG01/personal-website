@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // 管理员用户
 export const users = sqliteTable("users", {
@@ -62,8 +62,35 @@ export const auditLogs = sqliteTable("audit_logs", {
     .default(sql`(unixepoch())`),
 });
 
+// 页面访问统计（汇总计数，每路径一行）
+export const pageViews = sqliteTable("page_views", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  path: text("path").notNull().unique(),
+  views: integer("views").notNull().default(0),
+  uniqueViews: integer("unique_views").notNull().default(0),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+// 访客去重记录（path + visitorId 唯一，判断是否新访客）
+export const visitorViews = sqliteTable(
+  "visitor_views",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    path: text("path").notNull(),
+    visitorId: text("visitor_id").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (t) => [uniqueIndex("idx_visitor_path").on(t.path, t.visitorId)],
+);
+
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
 export type Timeline = typeof timelines.$inferSelect;
 export type Profile = typeof profile.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
+export type PageView = typeof pageViews.$inferSelect;
+export type VisitorView = typeof visitorViews.$inferSelect;

@@ -49,10 +49,13 @@ function getAuthHeaders(): Record<string, string> {
 }
 
 export async function fetchUserRepos(): Promise<GitHubRepo[]> {
-  const res = await fetch(`${GITHUB_API}/users/${env.GITHUB_USERNAME}/repos?per_page=100&sort=updated`, {
-    headers: getAuthHeaders(),
-    next: { revalidate: 300 }, // 5 分钟缓存
-  });
+  const res = await fetch(
+    `${GITHUB_API}/users/${env.GITHUB_USERNAME}/repos?per_page=100&sort=updated`,
+    {
+      headers: getAuthHeaders(),
+      next: { revalidate: 300 }, // 5 分钟缓存
+    },
+  );
 
   if (!res.ok) {
     throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
@@ -73,6 +76,66 @@ export async function fetchUserProfile(): Promise<GitHubUser> {
   }
 
   return res.json();
+}
+
+export interface GitHubRepoDetail {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  homepage: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  open_issues_count: number;
+  watchers_count: number;
+  topics: string[];
+  license: { name: string } | null;
+  default_branch: string;
+  created_at: string;
+  updated_at: string;
+  archived: boolean;
+  fork: boolean;
+  size: number;
+}
+
+// 单仓库详情
+export async function fetchRepoDetail(repo: string): Promise<GitHubRepoDetail> {
+  const res = await fetch(`${GITHUB_API}/repos/${env.GITHUB_USERNAME}/${repo}`, {
+    headers: getAuthHeaders(),
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) {
+    throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+// 仓库语言占比（字节数）
+export async function fetchRepoLanguages(repo: string): Promise<Record<string, number>> {
+  const res = await fetch(`${GITHUB_API}/repos/${env.GITHUB_USERNAME}/${repo}/languages`, {
+    headers: getAuthHeaders(),
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) return {};
+  return res.json();
+}
+
+// 仓库 README（返回解码后的 Markdown 原文）
+export async function fetchRepoReadme(repo: string): Promise<string | null> {
+  const res = await fetch(`${GITHUB_API}/repos/${env.GITHUB_USERNAME}/${repo}/readme`, {
+    headers: getAuthHeaders(),
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data?.content) return null;
+  return Buffer.from(data.content, "base64").toString("utf8");
 }
 
 // 语言颜色映射

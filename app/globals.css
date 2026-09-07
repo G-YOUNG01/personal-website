@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 基于 data-theme 属性的暗色模式 variant（配合 ThemeProvider 使用） */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --background: #eef6ff;
   --foreground: #0f172a;
@@ -11,6 +14,230 @@
   --purple: #8b5cf6;
   --muted: #64748b;
   --border: rgba(15, 23, 42, 0.1);
+
+  /* ---- 玻璃系统（亮色） ---- */
+  --glass-gradient: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  --glass-gradient-hover: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.66) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-border-hover: rgba(255, 255, 255, 0.85);
+  --glass-highlight: rgba(255, 255, 255, 0.85);
+  --glass-shade: rgba(255, 255, 255, 0.12);
+  --glass-toplight: rgba(255, 255, 255, 0.95);
+  --glass-shadow: 0 10px 36px rgba(15, 23, 42, 0.07);
+  --glass-shadow-hover: 0 18px 48px rgba(15, 23, 42, 0.1);
+
+  /* ---- 导航 ---- */
+  --nav-bg: rgba(255, 255, 255, 0.72);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.94);
+  --nav-border: rgba(15, 23, 42, 0.06);
+  --nav-pill-bg: rgba(255, 255, 255, 0.45);
+  --nav-pill-border: rgba(0, 0, 0, 0.1);
+
+  /* ---- 表单 ---- */
+  --input-bg: rgba(255, 255, 255, 0.85);
+  --input-bg-focus: #fff;
+
+  /* ---- 正文 / 代码 ---- */
+  --prose-text: #334155;
+  --prose-quote-bg: rgba(255, 255, 255, 0.6);
+  --code-bg: rgba(15, 23, 42, 0.9);
+
+  /* ---- 背景光斑（亮色） ---- */
+  --bg-grad: radial-gradient(
+    120% 120% at 12% 8%,
+    #eef6ff 0%,
+    #f0f4ff 38%,
+    #f5f1ff 68%,
+    #fbf3ff 100%
+  );
+  --glow-blue: rgba(96, 165, 250, 0.38);
+  --glow-cyan: rgba(45, 212, 191, 0.3);
+  --glow-purple: rgba(167, 139, 250, 0.34);
+  --glow-pink: rgba(244, 114, 182, 0.26);
+  --glow-sky: rgba(56, 189, 248, 0.28);
+  --glow-warm: rgba(253, 186, 116, 0.26);
+  --liquid-a: rgba(96, 165, 250, 0.2);
+  --liquid-b: rgba(167, 139, 250, 0.14);
+  --liquid-c: rgba(45, 212, 191, 0.16);
+  --liquid-d: rgba(139, 92, 246, 0.16);
+  --liquid-e: rgba(56, 189, 248, 0.16);
+  --liquid-f: rgba(244, 114, 182, 0.12);
+
+  /* 背景光斑完整渐变（亮色） */
+  --grad-blue: radial-gradient(
+    circle at 35% 35%,
+    rgba(96, 165, 250, 0.38) 0%,
+    rgba(96, 165, 250, 0.13) 45%,
+    rgba(96, 165, 250, 0) 70%
+  );
+  --grad-cyan: radial-gradient(
+    circle at 60% 30%,
+    rgba(45, 212, 191, 0.3) 0%,
+    rgba(45, 212, 191, 0.1) 45%,
+    rgba(45, 212, 191, 0) 70%
+  );
+  --grad-purple: radial-gradient(
+    circle at 50% 40%,
+    rgba(167, 139, 250, 0.34) 0%,
+    rgba(167, 139, 250, 0.12) 45%,
+    rgba(167, 139, 250, 0) 70%
+  );
+  --grad-pink: radial-gradient(
+    circle at 50% 40%,
+    rgba(244, 114, 182, 0.26) 0%,
+    rgba(244, 114, 182, 0.09) 45%,
+    rgba(244, 114, 182, 0) 70%
+  );
+  --grad-sky: radial-gradient(
+    circle at 50% 40%,
+    rgba(56, 189, 248, 0.28) 0%,
+    rgba(56, 189, 248, 0.1) 45%,
+    rgba(56, 189, 248, 0) 70%
+  );
+  --grad-warm: radial-gradient(
+    circle at 50% 40%,
+    rgba(253, 186, 116, 0.26) 0%,
+    rgba(253, 186, 116, 0.08) 45%,
+    rgba(253, 186, 116, 0) 70%
+  );
+  --liquid-grad-a: conic-gradient(
+    from 0deg at 40% 40%,
+    rgba(96, 165, 250, 0.2),
+    rgba(167, 139, 250, 0.14),
+    rgba(45, 212, 191, 0.16),
+    rgba(96, 165, 250, 0.2)
+  );
+  --liquid-grad-b: conic-gradient(
+    from 180deg at 60% 60%,
+    rgba(139, 92, 246, 0.16),
+    rgba(56, 189, 248, 0.16),
+    rgba(244, 114, 182, 0.12),
+    rgba(139, 92, 246, 0.16)
+  );
+}
+
+/* ========== 暗色主题 ========== */
+[data-theme="dark"] {
+  --background: #0a0f1e;
+  --foreground: #e2e8f0;
+  --primary: #60a5fa;
+  --primary-light: #93c5fd;
+  --accent: #22d3ee;
+  --accent-light: #67e8f9;
+  --pink: #f472b6;
+  --purple: #a78bfa;
+  --muted: #94a3b8;
+  --border: rgba(255, 255, 255, 0.12);
+
+  --glass-gradient: linear-gradient(
+    145deg,
+    rgba(148, 163, 184, 0.14) 0%,
+    rgba(30, 41, 59, 0.42) 100%
+  );
+  --glass-gradient-hover: linear-gradient(
+    145deg,
+    rgba(148, 163, 184, 0.22) 0%,
+    rgba(51, 65, 85, 0.52) 100%
+  );
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-border-hover: rgba(255, 255, 255, 0.26);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-shade: rgba(0, 0, 0, 0.22);
+  --glass-toplight: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
+  --glass-shadow-hover: 0 18px 48px rgba(0, 0, 0, 0.5);
+
+  --nav-bg: rgba(10, 15, 30, 0.62);
+  --nav-bg-scrolled: rgba(10, 15, 30, 0.8);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-pill-bg: rgba(15, 23, 42, 0.55);
+  --nav-pill-border: rgba(255, 255, 255, 0.12);
+
+  --input-bg: rgba(30, 41, 59, 0.62);
+  --input-bg-focus: rgba(30, 41, 59, 0.9);
+
+  --prose-text: #cbd5e1;
+  --prose-quote-bg: rgba(30, 41, 59, 0.5);
+  --code-bg: rgba(2, 6, 23, 0.92);
+
+  --bg-grad: radial-gradient(
+    120% 120% at 12% 8%,
+    #0a0f1e 0%,
+    #0d1226 38%,
+    #131034 68%,
+    #1a0f2e 100%
+  );
+  --glow-blue: rgba(59, 130, 246, 0.3);
+  --glow-cyan: rgba(45, 212, 191, 0.2);
+  --glow-purple: rgba(139, 92, 246, 0.28);
+  --glow-pink: rgba(244, 114, 182, 0.16);
+  --glow-sky: rgba(56, 189, 248, 0.2);
+  --glow-warm: rgba(253, 186, 116, 0.14);
+  --liquid-a: rgba(96, 165, 250, 0.16);
+  --liquid-b: rgba(167, 139, 250, 0.12);
+  --liquid-c: rgba(45, 212, 191, 0.12);
+  --liquid-d: rgba(139, 92, 246, 0.14);
+  --liquid-e: rgba(56, 189, 248, 0.12);
+  --liquid-f: rgba(244, 114, 182, 0.1);
+
+  --grad-blue: radial-gradient(
+    circle at 35% 35%,
+    rgba(59, 130, 246, 0.3) 0%,
+    rgba(59, 130, 246, 0.1) 45%,
+    rgba(59, 130, 246, 0) 70%
+  );
+  --grad-cyan: radial-gradient(
+    circle at 60% 30%,
+    rgba(45, 212, 191, 0.2) 0%,
+    rgba(45, 212, 191, 0.07) 45%,
+    rgba(45, 212, 191, 0) 70%
+  );
+  --grad-purple: radial-gradient(
+    circle at 50% 40%,
+    rgba(139, 92, 246, 0.28) 0%,
+    rgba(139, 92, 246, 0.1) 45%,
+    rgba(139, 92, 246, 0) 70%
+  );
+  --grad-pink: radial-gradient(
+    circle at 50% 40%,
+    rgba(244, 114, 182, 0.16) 0%,
+    rgba(244, 114, 182, 0.06) 45%,
+    rgba(244, 114, 182, 0) 70%
+  );
+  --grad-sky: radial-gradient(
+    circle at 50% 40%,
+    rgba(56, 189, 248, 0.2) 0%,
+    rgba(56, 189, 248, 0.07) 45%,
+    rgba(56, 189, 248, 0) 70%
+  );
+  --grad-warm: radial-gradient(
+    circle at 50% 40%,
+    rgba(253, 186, 116, 0.14) 0%,
+    rgba(253, 186, 116, 0.05) 45%,
+    rgba(253, 186, 116, 0) 70%
+  );
+  --liquid-grad-a: conic-gradient(
+    from 0deg at 40% 40%,
+    rgba(96, 165, 250, 0.16),
+    rgba(167, 139, 250, 0.12),
+    rgba(45, 212, 191, 0.12),
+    rgba(96, 165, 250, 0.16)
+  );
+  --liquid-grad-b: conic-gradient(
+    from 180deg at 60% 60%,
+    rgba(139, 92, 246, 0.14),
+    rgba(56, 189, 248, 0.12),
+    rgba(244, 114, 182, 0.1),
+    rgba(139, 92, 246, 0.14)
+  );
 }
 
 @theme inline {
@@ -204,16 +431,16 @@ body {
 .card,
 .glow-border {
   position: relative;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.16) 100%);
+  background: var(--glass-gradient);
   backdrop-filter: blur(46px) saturate(230%);
   -webkit-backdrop-filter: blur(46px) saturate(230%);
   border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--glass-border);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
-    0 10px 36px rgba(15, 23, 42, 0.07);
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-shade),
+    var(--glass-shadow);
 }
 
 /* 玻璃顶部高光条 */
@@ -228,8 +455,8 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.95) 25%,
-    rgba(255, 255, 255, 0.95) 75%,
+    var(--glass-toplight) 25%,
+    var(--glass-toplight) 75%,
     transparent
   );
   border-radius: 22px 22px 0 0;
@@ -238,12 +465,12 @@ body {
 
 .card:hover,
 .glow-border:hover {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 255, 255, 0.3) 100%);
-  border-color: rgba(255, 255, 255, 0.85);
+  background: var(--glass-gradient-hover);
+  border-color: var(--glass-border-hover);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
-    0 18px 48px rgba(15, 23, 42, 0.1);
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-shade),
+    var(--glass-shadow-hover);
   transform: translateY(-4px);
 }
 
@@ -252,8 +479,8 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 1) 15%,
-    rgba(255, 255, 255, 1) 85%,
+    var(--glass-toplight) 15%,
+    var(--glass-toplight) 85%,
     transparent
   );
 }
@@ -292,7 +519,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.35));
+  background: var(--glass-gradient);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   color: var(--foreground);
@@ -301,16 +528,16 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
   cursor: pointer;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 var(--glass-highlight),
     0 4px 16px rgba(15, 23, 42, 0.06);
 }
 
 .btn-outline:hover {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5));
-  border-color: rgba(255, 255, 255, 0.9);
+  background: var(--glass-gradient-hover);
+  border-color: var(--glass-border-hover);
   transform: translateY(-2px) scale(1.02);
 }
 
@@ -324,18 +551,18 @@ body {
   padding: 0.5rem 1rem;
   border-radius: 11px;
   font-size: 0.9rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.4));
+  background: var(--glass-gradient);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  color: #2563eb;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: var(--primary-light);
+  border: 1px solid var(--glass-border);
   font-weight: 500;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
   transition: all 0.2s ease;
 }
 
 .tag:hover {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55));
+  background: var(--glass-gradient-hover);
   transform: translateY(-1px);
 }
 
@@ -356,7 +583,7 @@ body {
   height: 1rem;
   border-radius: 50%;
   background: #3b82f6;
-  border: 3px solid #fff;
+  border: 3px solid var(--background);
   box-shadow:
     0 0 0 1px rgba(59, 130, 246, 0.3),
     0 2px 8px rgba(59, 130, 246, 0.3);
@@ -365,7 +592,7 @@ body {
 /* ========== 代码块 - 深色 ========== */
 pre {
   position: relative;
-  background: rgba(15, 23, 42, 0.9);
+  background: var(--code-bg);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   padding: 1.4rem;
@@ -404,7 +631,7 @@ code {
 .prose-content p {
   margin-bottom: 1.25rem;
   line-height: 1.8;
-  color: #334155;
+  color: var(--prose-text);
   font-size: 1.05rem;
 }
 
@@ -416,27 +643,27 @@ code {
 
 .prose-content li {
   margin-bottom: 0.6rem;
-  color: #334155;
+  color: var(--prose-text);
   line-height: 1.7;
 }
 
 .prose-content a {
-  color: #2563eb;
+  color: var(--primary-light);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .prose-content a:hover {
-  color: #1e40af;
+  color: var(--primary);
 }
 
 .prose-content blockquote {
   border-left: 3px solid #3b82f6;
   padding: 1rem 1.25rem;
   margin: 1.5rem 0;
-  color: #475569;
+  color: var(--prose-text);
   font-style: italic;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--prose-quote-bg);
   border-radius: 0 16px 16px 0;
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-left: 3px solid #3b82f6;
@@ -452,7 +679,7 @@ code {
 input,
 select,
 textarea {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--input-bg);
   border: 1.5px solid rgba(59, 130, 246, 0.25);
   border-radius: 12px;
   color: var(--foreground);
@@ -468,7 +695,40 @@ textarea:focus {
   box-shadow:
     0 0 0 4px rgba(59, 130, 246, 0.12),
     0 2px 8px rgba(0, 0, 0, 0.04);
-  background: #fff;
+  background: var(--input-bg-focus);
+}
+
+/* ========== 玻璃下拉（作品集排序等） ========== */
+.glass-select-trigger {
+  background: var(--input-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1.5px solid rgba(59, 130, 246, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.glass-select-trigger:hover {
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.glass-select-trigger[aria-expanded="true"] {
+  border-color: #3b82f6;
+  background: var(--input-bg-focus);
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.glass-select-menu {
+  background: var(--glass-gradient);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 14px 40px rgba(15, 23, 42, 0.14);
 }
 
 /* ========== 滚动条 ========== */
@@ -500,27 +760,27 @@ textarea:focus {
 
 /* ========== 白色简洁导航栏（DeepSeek 官网风格） ========== */
 .glass-nav {
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--nav-bg);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid var(--nav-border);
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
 }
 
 .glass-nav-scrolled {
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--nav-bg-scrolled);
   backdrop-filter: blur(36px) saturate(200%);
   -webkit-backdrop-filter: blur(36px) saturate(200%);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid var(--nav-border);
   box-shadow: 0 8px 32px rgba(15, 23, 42, 0.07);
 }
 
 /* 滚动后悬浮的圆弧长椭圆导航（DeepSeek 官网参数：白 45% + blur12px + 边框 10% 黑） */
 .glass-nav-pill {
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--nav-pill-bg);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border-color: rgba(0, 0, 0, 0.1);
+  border-color: var(--nav-pill-border);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
 }
 

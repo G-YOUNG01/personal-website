@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 import sanitizeHtml from "sanitize-html";
 import { db } from "@/lib/db";
 import { posts } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { env } from "@/lib/env";
+import { extractToc } from "@/lib/toc";
+import TocClient from "@/components/TocClient";
+import ViewCounter from "@/components/ViewCounter";
+import Giscus from "@/components/Giscus";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -34,12 +38,34 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 // sanitize-html 白名单，放行 Shiki 代码块的 class 和 style
 const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedTags: [
-    "h1", "h2", "h3", "h4", "h5", "h6",
-    "p", "a", "ul", "ol", "li",
-    "blockquote", "code", "pre",
-    "img", "hr", "br", "strong", "em", "del",
-    "table", "thead", "tbody", "tr", "th", "td",
-    "span", "div",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "a",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "code",
+    "pre",
+    "img",
+    "hr",
+    "br",
+    "strong",
+    "em",
+    "del",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
+    "span",
+    "div",
   ],
   allowedAttributes: {
     a: ["href", "title", "target", "rel"],
@@ -61,6 +87,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   const cleanContent = sanitizeHtml(post.content, sanitizeOptions);
+  const { html: contentWithToc, toc } = extractToc(cleanContent);
+
+  // 上一篇 / 下一篇（按发布时间相邻）
+  const allPublished = await db
+    .select({ id: posts.id, title: posts.title, slug: posts.slug })
+    .from(posts)
+    .where(eq(posts.published, true))
+    .orderBy(desc(posts.createdAt))
+    .all();
+  const idx = allPublished.findIndex((p) => p.id === post.id);
+  const prevPost = idx > 0 ? allPublished[idx - 1] : null;
+  const nextPost = idx >= 0 && idx < allPublished.length - 1 ? allPublished[idx + 1] : null;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -73,7 +112,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <header className="mb-10">
         <div className="flex items-center gap-3 mb-4 text-sm text-muted">
@@ -87,13 +129,58 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ))}
             </div>
           )}
+          <ViewCounter
+            path={`/blog/${post.slug}`}
+            className="ml-auto flex items-center gap-1 text-xs text-muted"
+          />
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold mb-4">{post.title}</h1>
       </header>
 
-      <div className="prose-content" dangerouslySetInnerHTML={{ __html: cleanContent }} />
+      {toc.length > 0 && <TocClient items={toc} />}
 
-      <div className="mt-16 pt-8 border-t border-border">
+      <div className="prose-content" dangerouslySetInnerHTML={{ __html: contentWithToc }} />
+
+      {/* 上一篇 / 下一篇 */}
+      {(prevPost || nextPost) && (
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {prevPost ? (
+            <Link
+              href={`/blog/${prevPost.slug}`}
+              className="card p-4 block group hover:border-primary transition-all"
+            >
+              <span className="text-xs text-muted">← 上一篇</span>
+              <div className="mt-1 font-medium group-hover:text-primary-light transition-colors line-clamp-1">
+                {prevPost.title}
+              </div>
+            </Link>
+          ) : (
+            <span className="hidden sm:block" />
+          )}
+          {nextPost && (
+            <Link
+              href={`/blog/${nextPost.slug}`}
+              className="card p-4 block group text-right hover:border-primary transition-all"
+            >
+              <span className="text-xs text-muted">下一篇 →</span>
+              <div className="mt-1 font-medium group-hover:text-primary-light transition-colors line-clamp-1">
+                {nextPost.title}
+              </div>
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* 评论区（Giscus） */}
+      <Giscus
+        repo={env.GISCUS_REPO}
+        repoId={env.GISCUS_REPO_ID}
+        category={env.GISCUS_CATEGORY}
+        categoryId={env.GISCUS_CATEGORY_ID}
+        term={`blog/${post.slug}`}
+      />
+
+      <div className="mt-10 pt-8 border-t border-border">
         <Link href="/blog" className="text-primary-light hover:underline">
           ← 返回博客列表
         </Link>

@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { t, lang, setLang } = useLanguage();
+  const { theme, toggle } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -33,14 +35,14 @@ export default function Navbar() {
 
   /* DeepSeek 官网风格语言切换：圆弧分段，14px 文字，紧凑尺寸 */
   const langSwitch = (
-    <div className="inline-flex items-center rounded-full bg-white/25 p-0.5">
+    <div className="inline-flex items-center rounded-full bg-white/25 dark:bg-white/10 p-0.5">
       <button
         type="button"
         onClick={() => setLang("zh")}
         aria-pressed={lang === "zh"}
         className={`px-3 py-1.5 rounded-full text-[14px] leading-none transition-colors ${
           lang === "zh"
-            ? "bg-white/85 text-primary-light font-medium shadow-sm"
+            ? "bg-white/85 dark:bg-white/15 text-primary-light font-medium shadow-sm"
             : "text-muted hover:text-foreground"
         }`}
       >
@@ -52,13 +54,56 @@ export default function Navbar() {
         aria-pressed={lang === "en"}
         className={`px-3 py-1.5 rounded-full text-[14px] leading-none transition-colors ${
           lang === "en"
-            ? "bg-white/85 text-primary-light font-medium shadow-sm"
+            ? "bg-white/85 dark:bg-white/15 text-primary-light font-medium shadow-sm"
             : "text-muted hover:text-foreground"
         }`}
       >
         EN
       </button>
     </div>
+  );
+
+  /* 主题切换：太阳 / 月亮 */
+  const themeSwitch = (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === "light" ? "切换到暗色模式" : "切换到亮色模式"}
+      title={theme === "light" ? "暗色模式" : "亮色模式"}
+      className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/25 dark:bg-white/10 text-foreground hover:bg-white/40 dark:hover:bg-white/20 transition-colors"
+    >
+      {theme === "light" ? (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          />
+        </svg>
+      ) : (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+      )}
+    </button>
   );
 
   return (
@@ -95,7 +140,10 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <span className="ml-2">{langSwitch}</span>
+              <span className="ml-2 flex items-center gap-2">
+                {themeSwitch}
+                {langSwitch}
+              </span>
 
               <a
                 href="mailto:hello@gyoung.xyz"
@@ -137,7 +185,7 @@ export default function Navbar() {
           {mobileOpen && (
             <div
               id="mobile-menu"
-              className="md:hidden pb-6 pt-2 mt-2 mb-4 rounded-2xl bg-white/90 backdrop-blur-xl border border-white/70 shadow-xl"
+              className="md:hidden pb-6 pt-2 mt-2 mb-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/70 dark:border-white/15 shadow-xl"
             >
               {navItems.map((item) => (
                 <Link
@@ -147,13 +195,16 @@ export default function Navbar() {
                   className={`block px-4 py-3 rounded-xl text-sm font-medium mx-2 ${
                     isActive(item.href)
                       ? "text-primary-light"
-                      : "text-muted hover:text-foreground hover:bg-white/60"
+                      : "text-muted hover:text-foreground hover:bg-white/60 dark:hover:bg-white/10"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="px-4 mt-3">{langSwitch}</div>
+              <div className="px-4 mt-3 flex items-center gap-3">
+                {themeSwitch}
+                {langSwitch}
+              </div>
               <a
                 href="mailto:hello@gyoung.xyz"
                 className="block px-4 py-3 mx-2 mt-2 text-sm font-medium text-primary-light"

@@ -3,6 +3,7 @@ import "./globals.css";
 import MainShell from "@/components/MainShell";
 import BackgroundGlow from "@/components/BackgroundGlow";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
@@ -49,16 +50,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <LanguageProvider>
-          <BackgroundGlow />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
-          <MainShell>{children}</MainShell>
-        </LanguageProvider>
+        {/* 首帧前恢复主题，避免暗色模式闪烁（FOUC） */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("gyoung-theme");var th=t==="dark"?"dark":"light";document.documentElement.setAttribute("data-theme",th);}catch(e){}})();`,
+          }}
+        />
+        <ThemeProvider>
+          <LanguageProvider>
+            <BackgroundGlow />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <MainShell>{children}</MainShell>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { desc, eq, count } from "drizzle-orm";
+import { desc, eq, count, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { posts, timelines, profile } from "@/lib/db/schema";
+import { posts, timelines, profile, pageViews } from "@/lib/db/schema";
 import { getSession } from "@/lib/auth/session";
 import AdminNav from "@/components/admin/AdminNav";
 
@@ -14,12 +14,29 @@ export default async function AdminPage() {
     redirect("/admin/login");
   }
 
-  const [postCount, timelineCount, profileData, recentPosts] = await Promise.all([
-    db.select({ count: count() }).from(posts).get(),
-    db.select({ count: count() }).from(timelines).get(),
-    db.select().from(profile).where(eq(profile.id, 1)).get(),
-    db.select().from(posts).orderBy(desc(posts.updatedAt)).limit(5).all(),
-  ]);
+  const [postCount, timelineCount, profileData, recentPosts, viewSummary, topPages] =
+    await Promise.all([
+      db.select({ count: count() }).from(posts).get(),
+      db.select({ count: count() }).from(timelines).get(),
+      db.select().from(profile).where(eq(profile.id, 1)).get(),
+      db.select().from(posts).orderBy(desc(posts.updatedAt)).limit(5).all(),
+      db
+        .select({
+          views: sql<number>`coalesce(sum(${pageViews.views}), 0)`,
+          unique: sql<number>`coalesce(sum(${pageViews.uniqueViews}), 0)`,
+        })
+        .from(pageViews)
+        .get(),
+      db
+        .select({ path: pageViews.path, views: pageViews.views })
+        .from(pageViews)
+        .orderBy(desc(pageViews.views))
+        .limit(6)
+        .all(),
+    ]);
+
+  const totalViews = viewSummary?.views ?? 0;
+  const totalUnique = viewSummary?.unique ?? 0;
 
   const stats = [
     { label: "博客文章", value: postCount?.count || 0, icon: "📝", href: "/admin/posts" },
@@ -44,7 +61,7 @@ export default async function AdminPage() {
       </div>
 
       {/* 统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {stats.map((stat) => (
           <Link
             key={stat.label}
@@ -56,6 +73,12 @@ export default async function AdminPage() {
             <div className="text-muted text-sm">{stat.label} →</div>
           </Link>
         ))}
+        {/* 访问统计 */}
+        <div className="card p-6">
+          <div className="text-3xl mb-3">👁️</div>
+          <div className="text-2xl font-bold mb-1">{totalViews.toLocaleString()} PV</div>
+          <div className="text-muted text-sm">独立访客 {totalUnique.toLocaleString()}</div>
+        </div>
       </div>
 
       {/* 快捷操作 */}
@@ -77,6 +100,21 @@ export default async function AdminPage() {
         </div>
       </div>
 
+      {/* 热门页面 */}
+      {topPages.length > 0 && (
+        <div className="card p-6 mb-8">
+          <h2 className="text-lg font-semibold mb-4">热门页面</h2>
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
+            {topPages.map((p) => (
+              <li key={p.path} className="py-2.5 flex items-center gap-3">
+                <span className="font-mono text-sm text-muted truncate flex-1">{p.path}</span>
+                <span className="text-sm font-medium">{p.views.toLocaleString()} 次</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* 最近文章 */}
       <div className="card p-6">
         <div className="flex items-center justify-between mb-4">
@@ -88,14 +126,14 @@ export default async function AdminPage() {
         {recentPosts.length === 0 ? (
           <p className="text-sm text-muted">还没有文章，点击「新建文章」开始创作。</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-white/10">
             {recentPosts.map((p) => (
               <li key={p.id} className="py-3 flex items-center gap-3">
                 <span
                   className={`text-[11px] px-2 py-0.5 rounded-full flex-none ${
                     p.published
                       ? "bg-emerald-500/10 text-emerald-600"
-                      : "bg-slate-500/10 text-slate-500"
+                      : "bg-slate-500/10 dark:bg-white/10 text-slate-500 dark:text-slate-300"
                   }`}
                 >
                   {p.published ? "已发布" : "草稿"}

@@ -47,7 +47,10 @@ export default async function AdminTimelinesPage() {
             </thead>
             <tbody>
               {rows.map((t) => (
-                <tr key={t.id} className="border-b border-slate-100 hover:bg-slate-50/60">
+                <tr
+                  key={t.id}
+                  className="border-b border-slate-100 dark:border-white/10 hover:bg-slate-50/60 dark:hover:bg-white/5"
+                >
                   <td className="py-3 px-4 text-muted text-xs">{t.sortOrder}</td>
                   <td className="py-3 px-4 font-semibold text-primary-light">{t.year}</td>
                   <td className="py-3 px-4 font-medium">{t.title}</td>

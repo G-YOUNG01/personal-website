@@ -59,7 +59,7 @@ export default function TechStack({ skills }: TechStackProps) {
             className="card px-5 py-4 flex items-center gap-3 hover:-translate-y-1"
           >
             {/* 半透明圆底衬真实 logo，深色 logo 也清晰且透出玻璃背景 */}
-            <span className="w-11 h-11 rounded-xl bg-white/75 backdrop-blur-sm shadow-sm flex items-center justify-center flex-shrink-0 p-2">
+            <span className="w-11 h-11 rounded-xl bg-white/75 dark:bg-white/10 backdrop-blur-sm shadow-sm flex items-center justify-center flex-shrink-0 p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`/icons/${logoMap[skill]}.svg`}

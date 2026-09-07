@@ -18,6 +18,7 @@
 - **G-YOUNG 名字动效**（DeepSeek「探索未至之境」风）：流动渐变 + conic 旋转光晕 + 8 颗漂浮光点 + 鼠标悬停黑色聚光灯圈
 - **中英文切换**：全局 i18n（中文 / EN），导航右上角圆弧分段按钮，语言偏好写入 `localStorage` 记忆
 - **液态玻璃背景**：浅蓝→淡紫渐变 + 多层大尺寸光斑 + 两层 conic 流体渐变缓慢流动 + 磨砂噪点颗粒；`fixed` 定位，页面滚动时背景动效全程一致
+- **暗色 / 亮色主题切换**：全站 CSS 变量双主题（iOS 液态玻璃在暗色下保持高级质感），导航栏太阳/月亮一键切换，偏好写入 `localStorage` 记忆，首帧内联脚本防闪烁（无 FOUC），背景光斑 / 玻璃卡片 / 表单 / 正文全量适配
 - **站点图标**：玻璃质感大写 G（矢量轮廓，从系统字体提取），浏览器标签页与导航栏 Logo 同款，SVG 任意尺寸清晰，透明背景
 - **作品集**：服务端拉取 GitHub 仓库（`fetch` + 5 分钟 `revalidate` 缓存），客户端搜索与排序，API 异常时优雅降级
 - **项目详情页**：点击作品卡片进入仓库详情（`/works/[repo]`），展示 Stars / Forks / Issues / Watchers 统计、技术栈语言占比条形图（GitHub 实时数据）、Topics、内联渲染 README（`marked` + `sanitize-html` 过滤，相对图片/链接自动重写为 GitHub 绝对地址）
@@ -426,7 +427,7 @@ GET    /api/stats/summary   # 全站统计（总 PV / 独立访客 / 热门页�
 - [x] 上传功能落地：封面图 / 头像 + 魔数校验（file-type）+ 5MB 限制
 - [x] `middleware` → `proxy` 迁移（Next.js 16 已弃用 middleware 约定）
 - [ ] CSP 从 `'unsafe-inline'` 收紧为 nonce/hash 模式
-- [ ] 暗色 / 亮色主题切换
+- [x] **暗色 / 亮色主题切换**：全站 CSS 变量双主题 + 防 FOUC + 深色玻璃质感
 - [x] **项目详情页**：仓库统计 + 语言占比 + README 内联渲染（marked + sanitize）
 - [x] **访客统计**：PV / 独立访客 + 管理端概览统计卡与热门页面
 - [x] **评论区**：Giscus（GitHub Discussions 零后端）
