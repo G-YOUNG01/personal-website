@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { timelines } from "@/lib/db/schema";
-import { requireAdminApi, csrfValid } from "@/lib/admin-api";
+import { requireAdminApi, csrfValid } from "@/lib/workspace-api";
 
 const updateSchema = z.object({
   slug: z

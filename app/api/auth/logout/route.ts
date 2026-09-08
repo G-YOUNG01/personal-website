@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   const session = await getSession();
 
   if (!session.isAdmin) {
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
+    return NextResponse.redirect(new URL("/workspace/login", request.url), { status: 303 });
   }
 
   // 校验 CSRF token，防止跨站请求伪造
@@ -16,5 +16,5 @@ export async function POST(request: Request) {
   }
 
   session.destroy();
-  return NextResponse.json({ success: true });
+  return NextResponse.redirect(new URL("/workspace/login", request.url), { status: 303 });
 }

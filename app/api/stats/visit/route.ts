@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sql, and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { pageViews, visitorViews } from "@/lib/db/schema";
+import { pageViews, visitorViews, dailyStats } from "@/lib/db/schema";
 
 const bodySchema = z.object({
   path: z.string().min(1).max(500),
@@ -15,6 +15,7 @@ export async function POST(request: Request) {
     const { path, visitorId } = bodySchema.parse(body);
 
     const now = new Date();
+    const today = now.toISOString().slice(0, 10); // YYYY-MM-DD
 
     // 1) 总浏览 +1（upsert）
     await db
@@ -32,13 +33,26 @@ export async function POST(request: Request) {
       .where(and(eq(visitorViews.path, path), eq(visitorViews.visitorId, visitorId)))
       .get();
 
-    if (!existing) {
+    const isNewVisitor = !existing;
+    if (isNewVisitor) {
       await db.insert(visitorViews).values({ path, visitorId });
       await db
         .update(pageViews)
         .set({ uniqueViews: sql`${pageViews.uniqueViews} + 1`, updatedAt: now })
         .where(eq(pageViews.path, path));
     }
+
+    // 3) 每日统计：当天 PV +1，新访客 UV +1
+    await db
+      .insert(dailyStats)
+      .values({ date: today, pv: 1, uv: isNewVisitor ? 1 : 0 })
+      .onConflictDoUpdate({
+        target: dailyStats.date,
+        set: {
+          pv: sql`${dailyStats.pv} + 1`,
+          uv: isNewVisitor ? sql`${dailyStats.uv} + 1` : dailyStats.uv,
+        },
+      });
 
     const row = await db.select().from(pageViews).where(eq(pageViews.path, path)).get();
     return NextResponse.json({

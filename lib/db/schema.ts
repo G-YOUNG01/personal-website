@@ -87,6 +87,32 @@ export const visitorViews = sqliteTable(
   (t) => [uniqueIndex("idx_visitor_path").on(t.path, t.visitorId)],
 );
 
+// 每日访问统计（用于趋势图，按天聚合）
+export const dailyStats = sqliteTable("daily_stats", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  date: text("date").notNull().unique(), // YYYY-MM-DD
+  pv: integer("pv").notNull().default(0),
+  uv: integer("uv").notNull().default(0),
+});
+
+// 待办/备忘录（完整版）
+export const todos = sqliteTable("todos", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull(),
+  category: text("category"), // 分类
+  priority: text("priority").notNull().default("medium"), // low / medium / high
+  dueDate: integer("due_date", { mode: "timestamp" }), // 截止日期
+  note: text("note"), // 备注
+  sortOrder: integer("sort_order").notNull().default(0), // 手动排序
+  completed: integer("completed", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
 export type User = typeof users.$inferSelect;
 export type Post = typeof posts.$inferSelect;
 export type Timeline = typeof timelines.$inferSelect;
@@ -94,3 +120,5 @@ export type Profile = typeof profile.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type PageView = typeof pageViews.$inferSelect;
 export type VisitorView = typeof visitorViews.$inferSelect;
+export type DailyStat = typeof dailyStats.$inferSelect;
+export type Todo = typeof todos.$inferSelect;

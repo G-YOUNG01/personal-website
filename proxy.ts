@@ -6,7 +6,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 登录页本身不需要认证，直接放行
-  if (pathname === "/admin/login") {
+  if (pathname === "/workspace/login") {
     return NextResponse.next();
   }
 
@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
   const session = await getIronSession<SessionData>(request.cookies as never, sessionOptions);
 
   if (!session.isAdmin) {
-    const loginUrl = new URL("/admin/login", request.url);
+    const loginUrl = new URL("/workspace/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -22,5 +22,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/workspace/:path*"],
 };

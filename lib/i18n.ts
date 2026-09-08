@@ -44,6 +44,35 @@ export interface Dict {
     timeline: string;
     builtWith: string;
   };
+  workspace: {
+    title: string;
+    overview: string;
+    posts: string;
+    timelines: string;
+    profile: string;
+    analytics: string;
+    github: string;
+    todos: string;
+    system: string;
+    server: string;
+    account: string;
+    logout: string;
+    backToSite: string;
+    welcome: string;
+    quickActions: string;
+    newPost: string;
+    newTimeline: string;
+    editProfile: string;
+    totalViews: string;
+    uniqueVisitors: string;
+    topPages: string;
+    recentPosts: string;
+    allPosts: string;
+    noPosts: string;
+    published: string;
+    draft: string;
+    edit: string;
+  };
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -92,6 +121,35 @@ export const translations: Record<Lang, Dict> = {
       timeline: "时间线",
       builtWith: "Built with Next.js.",
     },
+    workspace: {
+      title: "个人工作台",
+      overview: "概览",
+      posts: "文章管理",
+      timelines: "时间线",
+      profile: "个人简介",
+      analytics: "访客趋势",
+      github: "GitHub 状态",
+      todos: "待办备忘",
+      system: "系统状态",
+      server: "服务器信息",
+      account: "账号设置",
+      logout: "退出登录",
+      backToSite: "返回网站",
+      welcome: "欢迎回来",
+      quickActions: "快捷操作",
+      newPost: "新建文章",
+      newTimeline: "添加时间线",
+      editProfile: "编辑简介",
+      totalViews: "总浏览量",
+      uniqueVisitors: "独立访客",
+      topPages: "热门页面",
+      recentPosts: "最近更新",
+      allPosts: "全部文章",
+      noPosts: "还没有文章",
+      published: "已发布",
+      draft: "草稿",
+      edit: "编辑",
+    },
   },
   en: {
     nav: {
@@ -138,6 +196,35 @@ export const translations: Record<Lang, Dict> = {
       works: "Works",
       timeline: "Timeline",
       builtWith: "Built with Next.js.",
+    },
+    workspace: {
+      title: "Workspace",
+      overview: "Overview",
+      posts: "Posts",
+      timelines: "Timeline",
+      profile: "Profile",
+      analytics: "Analytics",
+      github: "GitHub",
+      todos: "Todos",
+      system: "System",
+      server: "Server",
+      account: "Account",
+      logout: "Logout",
+      backToSite: "Back to Site",
+      welcome: "Welcome back",
+      quickActions: "Quick Actions",
+      newPost: "New Post",
+      newTimeline: "New Timeline",
+      editProfile: "Edit Profile",
+      totalViews: "Total Views",
+      uniqueVisitors: "Unique Visitors",
+      topPages: "Top Pages",
+      recentPosts: "Recent Posts",
+      allPosts: "All Posts",
+      noPosts: "No posts yet",
+      published: "Published",
+      draft: "Draft",
+      edit: "Edit",
     },
   },
 };

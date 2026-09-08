@@ -118,7 +118,7 @@ export default function Navbar() {
         >
           <div className="px-6 h-14 flex items-center justify-between">
             <Link
-              href="/"
+              href="/workspace"
               className="text-lg font-bold tracking-tight text-foreground flex items-center gap-2"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

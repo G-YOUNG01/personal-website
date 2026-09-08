@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getSession, checkLoginRateLimit, resetLoginRateLimit, generateCsrfToken } from "@/lib/auth/session";
-import { env } from "@/lib/env";
+import { eq } from "drizzle-orm";
+import {
+  getSession,
+  checkLoginRateLimit,
+  resetLoginRateLimit,
+  generateCsrfToken,
+} from "@/lib/auth/session";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
+  username: z.string().min(1).max(100),
+  password: z.string().min(1).max(200),
 });
 
 export async function POST(request: Request) {
@@ -25,12 +32,20 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { username, password } = loginSchema.parse(body);
 
-    // 验证用户名和密码
-    if (username !== env.ADMIN_USERNAME) {
+    // 从数据库查询用户（常量时间比较：先查用户，再统一错误信息）
+    const user = await db.select().from(users).where(eq(users.username, username)).get();
+
+    // 无论用户名不存在还是密码错误，都返回统一错误信息，防止用户枚举
+    if (!user) {
+      // 即使用户不存在，也执行一次 bcrypt 比较以保持响应时间一致（防时序攻击）
+      await bcrypt.compare(
+        password,
+        "$2b$10$invalidhashinvalidhashinvalidhashinvalidhashinvalidhashinvali",
+      );
       return NextResponse.json({ error: "用户名或密码错误" }, { status: 401 });
     }
 
-    const isValid = await bcrypt.compare(password, env.ADMIN_PASSWORD_HASH);
+    const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid) {
       return NextResponse.json({ error: "用户名或密码错误" }, { status: 401 });
     }
@@ -38,7 +53,8 @@ export async function POST(request: Request) {
     // 登录成功，创建 session
     const session = await getSession();
     session.isAdmin = true;
-    session.username = username;
+    session.userId = user.id;
+    session.username = user.username;
     session.csrfToken = generateCsrfToken();
     await session.save();
 

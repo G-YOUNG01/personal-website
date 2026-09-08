@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { fileTypeFromBuffer } from "file-type";
-import { requireAdminApi, csrfValid } from "@/lib/admin-api";
+import { requireAdminApi, csrfValid } from "@/lib/workspace-api";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);

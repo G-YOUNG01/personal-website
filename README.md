@@ -26,8 +26,12 @@
 - **博客增强**：关键词全文搜索 + 标签筛选（客户端即时过滤）、文章目录 TOC（滚动高亮，`IntersectionObserver`）、上一篇 / 下一篇导航
 - **访客统计**：全站 PV / 独立访客统计（SQLite 计数 + localStorage 访客 ID 去重），作品详情、博客列表与详情页展示浏览量，管理端概览显示总 PV / UV 与热门页面 Top
 - **经历时间线**：年份 + 标题 + 描述 + 图标的时间轴展示
-- **后台内容管理**（`/admin`）：文章 / 时间线 / 个人简介的完整增删改（CRUD API + 管理端表单），图片上传（魔数校验 + 5MB 限制），保存后前台实时生效；含数据统计概览与最近更新
-- **管理后台独立导航**：后台使用专属顶部玻璃胶囊导航（G-YOUNG 站点图标 + 管理菜单），替换主站导航，仅保留「返回 / 退出」入口（`MainShell` 按路由分发全局元素）
+- **个人工作台**（`/workspace`，点击主站 G-YOUNG 进入）：左侧玻璃侧边栏 + 右侧主内容区布局，整合全部管理功能与数据监控，含 10 个模块：
+  - **内容管理**：概览（统计卡片 + 最近更新）、文章管理（CRUD + 搜索 + 标签）、时间线管理（CRUD + 排序）、个人简介编辑（头像上传 + 技能/联系方式）
+  - **数据监控**：访客趋势（近 7/30 天 PV/UV 柱状图 + 总计）、GitHub 仓库状态（仓库数/Star/Fork + 语言分布 + 最近更新）、待办备忘（完整版：分类/优先级/截止日期/备注/排序/完成状态，CRUD）
+  - **系统运维**：系统状态（数据库/GitHub API 连通性 + 运行时长/Node/Next 版本，30 秒自动刷新）、服务器信息（CPU/内存/磁盘进度条 + 系统信息/IP，10 秒自动刷新）、账号设置（改密码 + 改用户名，bcrypt 哈希 + CSRF 校验 + 旧密码验证）
+- **工作台登录认证**：用户名密码存储于 SQLite `users` 表（bcrypt 哈希），iron-session 加密会话（7 天有效期），登录限流（15 分钟 5 次），CSRF token 写入 `<meta name="csrf-token">` 供 client 组件读取，`proxy.ts` 拦截 `/workspace/:path*` 未认证请求重定向登录页
+- **工作台独立布局**：`/workspace/*` 不渲染主站导航栏与页脚，使用专属左侧玻璃侧边栏（260px，顶部 G-YOUNG logo + 三组导航 + 底部用户信息/语言切换/返回网站/退出登录），移动端汉堡菜单 + 遮罩，亮暗双主题全量适配（`MainShell` 按路由分发全局元素）
 - **安全**：iron-session 加密会话、bcrypt 密码哈希、登录限流、CSRF 校验、CSP 与安全响应头、`robots.txt` 屏蔽后台
 - **动效**：Framer Motion 进场 / 滚动动画 + CSS 背景光晕 / 液态流动动画，尊重 `prefers-reduced-motion`
 
@@ -54,12 +58,12 @@ npm run seed
 npm run dev
 ```
 
-访问 `http://localhost:3000`。后台登录地址 `/admin`：
+访问 `http://localhost:3000`。工作台登录地址 `/workspace/login`：
 
-- 用户名：`.env` 中的 `ADMIN_USERNAME`（本项目默认 `gyoung`）
-- 密码：`.env` 中的 `ADMIN_PASSWORD_HASH` 对应的明文（用 `npm run hash-password` 生成哈希后填入）
+- 默认账号：`gyoung` / `admin123`（由 `npm run seed` 写入数据库 `users` 表，幂等可安全重跑）
+- 登录后请立即进入「工作台 → 账号设置」修改密码和用户名
 
-> 后台登录**只校验环境变量**，与数据库 `users` 表无关；`seed` 写入的示例用户仅为历史预留。
+> 登录认证从数据库 `users` 表查询（bcrypt 哈希比对），不再依赖环境变量；`.env` 中的 `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` 仅用于 `seed` 脚本初始化默认用户。修改密码/用户名在工作台「账号设置」中操作，旧密码验证 + 新密码 bcrypt 重新哈希 + CSRF 校验。
 
 ---
 
@@ -214,16 +218,16 @@ pm2 set pm2-logrotate:retain 7
 
 全部通过 `.env` 配置（**不进 Git**，`.env` 已在 `.gitignore`）。启动时由 Zod 校验格式；运行时校验关键配置（`lib/env.ts` 的 `assertRuntimeConfig`）。
 
-| 变量                  | 必填           | 说明                                                                                                      |
-| --------------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`        | 建议           | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时 |
-| `GITHUB_USERNAME`     | 否             | GitHub 账号，默认 `G-YOUNG01`                                                                             |
-| `ADMIN_USERNAME`      | 否             | 后台用户名，默认 `gyoung`                                                                                 |
-| `ADMIN_PASSWORD_HASH` | **是**         | 管理员密码 bcrypt 哈希，`npm run hash-password` 生成；占位值 `placeholder_hash` 时运行时直接报错          |
-| `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                |
-| `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名    |
-| `DATABASE_URL`        | 否             | SQLite 连接串，默认 `file:./data.db`                                                                      |
-| `NODE_ENV`            | 否             | `development` / `production` / `test`                                                                     |
+| 变量                  | 必填           | 说明                                                                                                                    |
+| --------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`        | 建议           | GitHub PAT。占位值（含 `placeholder`/`xxxxxxxx`）时降级为匿名请求（60 次/时）；真 token 提升到 5000 次/时               |
+| `GITHUB_USERNAME`     | 否             | GitHub 账号，默认 `G-YOUNG01`                                                                                           |
+| `ADMIN_USERNAME`      | 否             | 仅用于 `seed` 初始化默认用户名，默认 `gyoung`；登录认证从数据库 `users` 表查询                                          |
+| `ADMIN_PASSWORD_HASH` | 否             | 仅用于 `seed` 初始化默认密码 bcrypt 哈希，`npm run hash-password` 生成；登录认证从数据库 `users` 表查询，可在工作台修改 |
+| `SESSION_SECRET`      | **是**（生产） | iron-session 加密密钥（≥ 32 字符），生产必须改为随机值；本地用默认值可启动，但部署必须替换                              |
+| `SITE_URL`            | **是**（生产） | 站点绝对地址（OG 图 / sitemap / RSS / JSON-LD 用）；默认 `http://localhost:3000`，部署必须改为线上域名                  |
+| `DATABASE_URL`        | 否             | SQLite 连接串，默认 `file:./data.db`                                                                                    |
+| `NODE_ENV`            | 否             | `development` / `production` / `test`                                                                                   |
 
 ---
 
@@ -264,8 +268,8 @@ SQLite 是单进程写锁数据库，PM2 cluster 多进程并发写会触发 `SQ
 ### 认证与安全
 
 - **iron-session**：登录成功写入加密 Cookie，`httpOnly` + `sameSite: 'lax'`，7 天过期，`secure` 按环境判断
-- **路由代理**（`proxy.ts`，Next.js 16 新约定）：`matcher: ['/admin/:path*']` 拦截未认证请求，重定向登录页
-- **CSRF**：登录时生成 token 存入 session；所有写操作（登录 / 登出 / 文章 / 时间线 / 简介 / 上传）均带 `csrfToken` 字段，服务端比对（`lib/admin-api.ts`）
+- **路由代理**（`proxy.ts`，Next.js 16 新约定）：`matcher: ['/workspace/:path*']` 拦截未认证请求，重定向登录页
+- **CSRF**：登录时生成 token 存入 session；所有写操作（登录 / 登出 / 文章 / 时间线 / 简介 / 上传）均带 `csrfToken` 字段，服务端比对（`lib/workspace-api.ts`）
 - **登录限流**：同 IP 15 分钟最多 5 次失败（内存计数，PM2 reload 后重置，属软限流）
 - **安全响应头**（`next.config.ts`）：生产环境 `Content-Security-Policy` + `X-Frame-Options: DENY` + `nosniff` + `Referrer-Policy` + `Permissions-Policy`
 
@@ -332,7 +336,7 @@ personal-website/
 ├── uploads/                 # 上传文件预留（Nginx 直出，不入 Git）
 ├── public/                  # 静态资源
 │   └── icons/               # 技术栈高清真实品牌 logo（SVG，本地化）
-├── proxy.ts                 # /admin 路由保护（Next.js 16 proxy 约定）
+├── proxy.ts                 # /workspace 路由保护（Next.js 16 proxy 约定）
 ├── next.config.ts           # 图片域名 / 安全响应头
 ├── drizzle.config.ts        # Drizzle 迁移配置
 ├── ecosystem.config.js      # PM2 配置

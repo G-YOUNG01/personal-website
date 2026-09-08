@@ -15,6 +15,13 @@
       "when": 1788249298616,
       "tag": "0001_chubby_cerise",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788853290205,
+      "tag": "0002_third_ezekiel",
+      "breakpoints": true
     }
   ]
 }

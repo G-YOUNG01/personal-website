@@ -8,13 +8,21 @@ const db = createClient({
 async function seed() {
   console.log("🌱 开始初始化示例数据...");
 
-  // 1. 管理员用户（用户名唯一，幂等）
-  const adminHash = bcrypt.hashSync("admin123", 10);
+  // 1. 管理员用户（用户名唯一，幂等；已存在时不覆盖密码，保护用户改过的密码）
+  const adminUsername = process.env.ADMIN_USERNAME || "gyoung";
+  // .env 里 bcrypt hash 按惯例写作 \$2b\$10\$...（防 dotenv 变量展开），此处还原为 $
+  const rawHash = (process.env.ADMIN_PASSWORD_HASH || "").replace(/\\\$/g, "$");
+  const useEnvHash = rawHash && rawHash !== "placeholder_hash";
+  const adminHash = useEnvHash ? rawHash : bcrypt.hashSync("admin123", 10);
   await db.execute({
     sql: `INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)`,
-    args: ["admin", adminHash],
+    args: [adminUsername, adminHash],
   });
-  console.log("  ✓ 管理员用户 (admin / admin123)");
+  if (useEnvHash) {
+    console.log(`  ✓ 管理员用户 (${adminUsername}，密码来自 ADMIN_PASSWORD_HASH)`);
+  } else {
+    console.log(`  ⚠️  管理员用户 (${adminUsername} / admin123) —— 未设置 ADMIN_PASSWORD_HASH，仅限本地开发！`);
+  }
 
   // 2. 个人简介（id 固定为 1，幂等）
   await db.execute({
@@ -107,7 +115,11 @@ async function seed() {
   console.log(`  ✓ ${timelines.length} 条时间线事件`);
 
   console.log("\n✅ 示例数据初始化完成！");
-  console.log("   管理员账号: admin / admin123（请及时修改密码）");
+  if (useEnvHash) {
+    console.log(`   管理员账号: ${adminUsername} / （你在 .env 中设置的密码，登录后可在工作台修改）`);
+  } else {
+    console.log(`   管理员账号: ${adminUsername} / admin123（默认密码，请及时修改）`);
+  }
 }
 
 seed().catch(console.error);

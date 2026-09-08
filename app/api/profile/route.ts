@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { profile } from "@/lib/db/schema";
-import { requireAdminApi, csrfValid } from "@/lib/admin-api";
+import { requireAdminApi, csrfValid } from "@/lib/workspace-api";
 
 const profileSchema = z.object({
   name: z.string().min(1, "名称不能为空").max(100),

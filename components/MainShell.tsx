@@ -6,15 +6,15 @@ import Footer from "@/components/Footer";
 
 /**
  * 页面外壳：根据路由决定渲染哪些全局元素。
- * - 管理后台（/admin/*）：不渲染主站导航栏与页脚，由管理端自己的顶部导航替代
+ * - 工作台（/workspace/*）：不渲染主站导航栏与页脚，由工作台自己的侧边栏布局替代
  * - 其余页面：正常渲染主站导航栏 + 页脚
  */
 export default function MainShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isWorkspace = pathname.startsWith("/workspace");
 
-  if (isAdmin) {
-    return <main className="pt-24">{children}</main>;
+  if (isWorkspace) {
+    return <main>{children}</main>;
   }
 
   return (
