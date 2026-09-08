@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 
 interface NavItem {
@@ -27,7 +27,6 @@ const dataGroup: NavItem[] = [
 const systemGroup: NavItem[] = [
   { href: "/workspace/system", labelKey: "system", icon: "⚙️" },
   { href: "/workspace/server", labelKey: "server", icon: "🖥️" },
-  { href: "/workspace/account", labelKey: "account", icon: "🔐" },
 ];
 
 export default function WorkspaceSidebar({
@@ -40,6 +39,20 @@ export default function WorkspaceSidebar({
   const pathname = usePathname();
   const { t, lang, toggle } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 点击外部关闭菜单
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
   const isActive = (href: string) => {
     if (href === "/workspace") return pathname === "/workspace";
@@ -51,7 +64,10 @@ export default function WorkspaceSidebar({
       <Link
         key={item.href}
         href={item.href}
-        onClick={() => setMobileOpen(false)}
+        onClick={() => {
+          setMobileOpen(false);
+          setMenuOpen(false);
+        }}
         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
           isActive(item.href)
             ? "bg-blue-500/15 text-primary-light shadow-sm"
@@ -85,39 +101,94 @@ export default function WorkspaceSidebar({
         <div className="space-y-1">{renderGroup(systemGroup)}</div>
       </nav>
 
-      {/* Bottom */}
-      <div className="border-t border-white/20 dark:border-white/10 p-3 space-y-2">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold flex-none">
+      {/* Bottom: avatar + popover menu */}
+      <div className="relative border-t border-white/20 dark:border-white/10 p-3" ref={menuRef}>
+        {/* Popover menu (opens upward) */}
+        {menuOpen && (
+          <div className="absolute bottom-full left-3 right-3 mb-2 glass-card rounded-2xl p-1.5 shadow-xl border border-white/30 dark:border-white/10 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            {/* 账号设置 */}
+            <Link
+              href="/workspace/account"
+              onClick={() => {
+                setMenuOpen(false);
+                setMobileOpen(false);
+              }}
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-muted hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5 transition-all"
+            >
+              <span className="text-base">🔐</span>
+              <span>{t.workspace.account}</span>
+            </Link>
+
+            {/* 中英文切换 */}
+            <button
+              onClick={() => {
+                toggle();
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-muted hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5 transition-all"
+            >
+              <span className="text-base">🌐</span>
+              <span className="flex-1 text-left">
+                {lang === "zh" ? "切换为 English" : "Switch to 中文"}
+              </span>
+              <span className="text-xs text-muted">{lang === "zh" ? "EN" : "中"}</span>
+            </button>
+
+            {/* 返回网站 */}
+            <Link
+              href="/"
+              target="_blank"
+              onClick={() => {
+                setMenuOpen(false);
+                setMobileOpen(false);
+              }}
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-muted hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5 transition-all"
+            >
+              <span className="text-base">🏠</span>
+              <span>{t.workspace.backToSite}</span>
+              <span className="ml-auto text-xs opacity-50">↗</span>
+            </Link>
+
+            {/* 分隔线 */}
+            <div className="h-px bg-white/20 dark:bg-white/10 my-1" />
+
+            {/* 退出登录 */}
+            <form action="/api/auth/logout" method="POST">
+              <input type="hidden" name="csrfToken" value={csrfToken} />
+              <button
+                type="submit"
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all"
+              >
+                <span className="text-base">🚪</span>
+                <span>{t.workspace.logout}</span>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Avatar button */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-xl transition-all ${
+            menuOpen ? "bg-white/50 dark:bg-white/10" : "hover:bg-white/40 dark:hover:bg-white/5"
+          }`}
+        >
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold flex-none shadow-md">
             {username.charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 text-left">
             <div className="text-sm font-medium truncate">{username}</div>
             <div className="text-[11px] text-muted">管理员</div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={toggle}
-            className="flex-1 btn-outline !py-1.5 !px-2 text-xs"
-            title="切换语言"
+          <svg
+            className={`w-4 h-4 text-muted flex-none transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            {lang === "zh" ? "EN" : "中文"}
-          </button>
-          <Link
-            href="/"
-            target="_blank"
-            className="flex-1 btn-outline !py-1.5 !px-2 text-xs text-center"
-          >
-            {t.workspace.backToSite}
-          </Link>
-        </div>
-        <form action="/api/auth/logout" method="POST">
-          <input type="hidden" name="csrfToken" value={csrfToken} />
-          <button type="submit" className="w-full btn-primary !py-1.5 text-xs">
-            {t.workspace.logout}
-          </button>
-        </form>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
       </div>
     </div>
   );
