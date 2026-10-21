@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { GitHubRepo } from "@/lib/github";
-import { languageColors } from "@/lib/github";
+import type { GitHubRepo } from "@/lib/github/shared";
+import { languageColors } from "@/lib/github/shared";
 
 interface RepoCardProps {
   repo: GitHubRepo;

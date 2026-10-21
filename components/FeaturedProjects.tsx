@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import type { GitHubRepo } from "@/lib/github";
-import { languageColors } from "@/lib/github";
+import type { GitHubRepo } from "@/lib/github/shared";
+import { languageColors } from "@/lib/github/shared";
 import { useLanguage } from "@/components/LanguageProvider";
 
 interface FeaturedProjectsProps {

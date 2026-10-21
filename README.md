@@ -216,7 +216,7 @@ pm2 set pm2-logrotate:retain 7
 
 ## ⚙️ 环境变量
 
-全部通过 `.env` 配置（**不进 Git**，`.env` 已在 `.gitignore`）。启动时由 Zod 校验格式；运行时校验关键配置（`lib/env.ts` 的 `assertRuntimeConfig`）。
+全部通过 `.env` 配置（**不进 Git**，`.env` 已在 `.gitignore`）。启动时由 Zod 校验格式；运行时校验关键配置（`lib/env.ts` 的 `assertRuntimeConfig`）。`lib/env.ts` 已标记 `import "server-only"`，任何客户端组件误引用都会在构建期报错，确保配置项与默认值不会打进浏览器 bundle。
 
 | 变量                  | 必填           | 说明                                                                                                                    |
 | --------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -235,7 +235,7 @@ pm2 set pm2-logrotate:retain 7
 
 | 层       | 技术                                   | 说明                                                    |
 | -------- | -------------------------------------- | ------------------------------------------------------- |
-| 框架     | Next.js 16.3.3（App Router）+ React 19 | 前后端一体                                              |
+| 框架     | Next.js 16.3.8（App Router）+ React 19 | 前后端一体                                              |
 | 样式     | Tailwind CSS v4 + 全局 CSS             | Liquid Glass 浅蓝紫液态玻璃（毛玻璃 / 高光 / 流体渐变） |
 | 动画     | Framer Motion                          | 进场 / 滚动动效，尊重 `prefers-reduced-motion`          |
 | 国际化   | 自研轻量 i18n（Context）               | 中英文文案切换，无需额外依赖                            |
@@ -318,14 +318,14 @@ personal-website/
 │   ├── ViewCounter.tsx      # 浏览量统计（访客 ID 去重）
 │   └── Footer.tsx
 ├── lib/
-│   ├── env.ts               # Zod 环境变量校验
+│   ├── env.ts               # Zod 环境变量校验（server-only）
 │   ├── admin-api.ts         # 后台 API 鉴权 + CSRF 校验
 │   ├── i18n.ts              # 中英文文案字典（zh / en）
 │   ├── readme.ts            # README Markdown 渲染（marked + sanitize + URL 重写）
 │   ├── toc.ts               # 文章目录提取（h2/h3 + 锚点注入）
 │   ├── auth/                # iron-session 配置 + 会话 / 限流
 │   ├── db/                  # Drizzle 连接 + schema
-│   └── github/              # GitHub API 拉取 + 语言配色 + 仓库详情
+│   └── github/              # GitHub API 拉取（server-only）+ shared.ts 客户端安全类型 / 语言配色
 ├── scripts/
 │   ├── gen_icon.py          # 从系统字体提取 G 轮廓生成站点图标
 │   ├── hash-password.mjs    # 生成密码哈希

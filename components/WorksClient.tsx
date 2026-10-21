@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import RepoCard from "@/components/RepoCard";
 import GlassSelect from "@/components/GlassSelect";
-import type { GitHubRepo } from "@/lib/github";
+import type { GitHubRepo } from "@/lib/github/shared";
 
 interface WorksClientProps {
   repos: GitHubRepo[];
